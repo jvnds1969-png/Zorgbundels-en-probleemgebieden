@@ -1,145 +1,151 @@
-/* =========================
-   Base
-========================= */
-* {
-  box-sizing: border-box;
-}
+<script>
+  // DATA: alle probleemgebieden + zorgbundels (jouw bestaande array blijft identiek)
+  const zorgbundels = window.zorgbundels || [
+    /* ... jouw bestaande data ... */
+  ];
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #f5f5f5;
-  color: #222;
-  line-height: 1.4;
-}
+  const table = document.getElementById("zorgbundelsTable");
+  const tbody = table.querySelector("tbody");
+  const searchInput = document.getElementById("searchInput");
+  const lexiconFilter = document.getElementById("lexiconFilter");
 
-/* =========================
-   Header
-========================= */
-header {
-  background: #005b96;
-  color: #fff;
-  padding: 1rem 2rem;
-}
+  // ---------- helpers ----------
+  const esc = (s) =>
+    String(s)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
 
-header h1 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1.5rem;
-}
-
-header p {
-  margin: 0;
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-/* =========================
-   Layout
-========================= */
-main {
-  padding: 1rem 2rem 2rem;
-}
-
-/* =========================
-   Controls (search & filter)
-========================= */
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  align-items: center;
-}
-
-.controls input[type="text"] {
-  flex: 1 1 220px;
-  padding: 0.45rem 0.6rem;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.controls select {
-  padding: 0.4rem 0.5rem;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-/* =========================
-   Table
-========================= */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  font-size: 0.85rem;
-}
-
-thead {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: #e5eff8;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 0.45rem 0.55rem;
-  vertical-align: top;
-}
-
-th {
-  text-align: left;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-tr:nth-child(even) td {
-  background: #fafafa;
-}
-
-/* =========================
-   Text helpers
-========================= */
-.small {
-  font-size: 0.8rem;
-  color: #555;
-}
-
-/* =========================
-   Badges (lexicon terms)
-========================= */
-.badge {
-  display: inline-block;
-  padding: 0.15rem 0.4rem;
-  margin: 0 0.25rem 0.25rem 0;
-  border-radius: 3px;
-  background: #e5eff8;
-  font-size: 0.7rem;
-  white-space: nowrap;
-}
-
-/* =========================
-   Highlights / states
-========================= */
-.highlight {
-  background: #fff3cd;
-}
-
-/* =========================
-   Responsive
-========================= */
-@media (max-width: 900px) {
-  header,
-  main {
-    padding-left: 1rem;
-    padding-right: 1rem;
+  function normalize(str) {
+    return String(str || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, ""); // accent-insensitive
   }
 
-  th,
-  td {
-    font-size: 0.78rem;
+  function renderBadges(list, type) {
+    // type = 'medisch' | 'patient'
+    return list
+      .map(
+        (term) =>
+          `<button type="button" class="badge badge-btn" data-type="${type}" data-term="${esc(
+            term
+          )}" title="Klik om hierop te zoeken">${esc(term)}</button>`
+      )
+      .join(" ");
   }
-}
+
+  function buildHaystack(zb) {
+    // alles wat doorzoekbaar moet zijn
+    return {
+      naam: normalize(zb.naam),
+      medisch: normalize(zb.medischLexicon.join(" ")),
+      patient: normalize(zb.patientLexicon.join(" ")),
+      // extra: ook klinisch/educatie/... meenemen? (optioneel)
+      all: normalize(
+        [
+          zb.naam,
+          zb.medischLexicon.join(" "),
+          zb.patientLexicon.join(" "),
+          zb.klinisch,
+          zb.educatie,
+          zb.functioneel,
+          zb.coordinatie,
+          zb.monitoring,
+          zb.zorgverleners,
+        ].join(" ")
+      ),
+    };
+  }
+
+  // Splits zoekinput op woorden (met quotes ondersteuning)
+  // Voorbeeld:  "hoge bloeddruk" val
+  function tokenize(query) {
+    const q = query.trim();
+    if (!q) return [];
+    const tokens = [];
+    const re = /"([^"]+)"|(\S+)/g;
+    let m;
+    while ((m = re.exec(q)) !== null) {
+      tokens.push(normalize(m[1] || m[2]));
+    }
+    return tokens.filter(Boolean);
+  }
+
+  function matchesTokens(haystack, tokens) {
+    // AND-logica: elk token moet voorkomen
+    return tokens.every((t) => haystack.includes(t));
+  }
+
+  function renderTableRows() {
+    const filterType = lexiconFilter.value; // all | medisch | patient
+    const query = searchInput.value;
+    const tokens = tokenize(query);
+
+    tbody.innerHTML = "";
+
+    zorgbundels.forEach((zb) => {
+      const hs = buildHaystack(zb);
+
+      // Waar zoeken we?
+      // - filterType === 'medisch' => naam + medisch
+      // - filterType === 'patient' => naam + patient
+      // - filterType === 'all' => alles (naam + lexicons + beschrijvende velden)
+      let searchable = hs.all;
+      if (filterType === "medisch") searchable = hs.naam + " " + hs.medisch;
+      if (filterType === "patient") searchable = hs.naam + " " + hs.patient;
+
+      const ok = tokens.length === 0 ? true : matchesTokens(searchable, tokens);
+      if (!ok) return;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${esc(zb.nr)}</td>
+        <td>${esc(zb.naam)}</td>
+        <td>${renderBadges(zb.medischLexicon, "medisch")}</td>
+        <td>${renderBadges(zb.patientLexicon, "patient")}</td>
+        <td class="small">${esc(zb.klinisch)}</td>
+        <td class="small">${esc(zb.educatie)}</td>
+        <td class="small">${esc(zb.functioneel)}</td>
+        <td class="small">${esc(zb.coordinatie)}</td>
+        <td class="small">${esc(zb.monitoring)}</td>
+        <td class="small">${esc(zb.zorgverleners)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ---------- interactions ----------
+  function setSearch(term, type = "all") {
+    searchInput.value = term;
+    lexiconFilter.value = type;
+    renderTableRows();
+    searchInput.focus();
+  }
+
+  // input events
+  searchInput.addEventListener("input", renderTableRows);
+  lexiconFilter.addEventListener("change", renderTableRows);
+
+  // click badges => filter direct op term + juiste lexicon-type
+  tbody.addEventListener("click", (e) => {
+    const btn = e.target.closest(".badge-btn");
+    if (!btn) return;
+    const term = btn.getAttribute("data-term") || "";
+    const type = btn.getAttribute("data-type") || "all";
+    setSearch(term, type);
+  });
+
+  // optioneel: Enter = forced rerender (handig bij mobiel)
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") renderTableRows();
+    if (e.key === "Escape") {
+      setSearch("", "all");
+    }
+  });
+
+  // Initial render
+  renderTableRows();
+</script>
