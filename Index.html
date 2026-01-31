@@ -1,140 +1,268 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Zorgbundels – Probleemgebieden, Lexicon en Zorg</title>
+
   <style>
-    body {
+    /* =========================
+       Base
+    ========================= */
+    * { box-sizing: border-box; }
+
+    body{
+      margin:0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
+      background:#f5f5f5;
+      color:#222;
+      line-height:1.4;
     }
-    header {
-      background: #005b96;
-      color: #fff;
-      padding: 1rem 2rem;
+
+    header{
+      background:#005b96;
+      color:#fff;
+      padding:1rem 2rem;
     }
-    header h1 {
-      margin: 0 0 0.25rem 0;
-      font-size: 1.5rem;
+    header h1{
+      margin:0 0 .25rem 0;
+      font-size:1.5rem;
     }
-    header p {
-      margin: 0;
-      font-size: 0.9rem;
-      opacity: 0.9;
+    header p{
+      margin:0;
+      font-size:.95rem;
+      opacity:.9;
     }
-    main {
-      padding: 1rem 2rem 2rem 2rem;
+
+    main{ padding:1rem 2rem 2rem; }
+
+    /* =========================
+       Controls
+    ========================= */
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:1rem;
+      align-items:flex-end;
+      margin-bottom:1rem;
     }
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      align-items: center;
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:.35rem;
+      min-width: 220px;
+      flex:1 1 320px;
     }
-    .controls input[type="text"] {
-      padding: 0.4rem 0.6rem;
-      font-size: 0.9rem;
-      flex: 1 1 220px;
+
+    label{
+      font-size:.82rem;
+      color:#444;
     }
-    .controls select {
-      padding: 0.35rem 0.5rem;
-      font-size: 0.9rem;
+
+    input[type="text"]{
+      padding:.55rem .65rem;
+      font-size:.95rem;
+      border:1px solid #ccc;
+      border-radius:6px;
+      background:#fff;
+      outline:none;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      font-size: 0.85rem;
+    input[type="text"]:focus{
+      border-color:#7aa7c7;
+      box-shadow:0 0 0 3px rgba(122,167,199,.25);
     }
-    thead {
-      position: sticky;
-      top: 0;
-      background: #e5eff8;
-      z-index: 1;
+
+    select{
+      padding:.52rem .6rem;
+      font-size:.95rem;
+      border:1px solid #ccc;
+      border-radius:6px;
+      background:#fff;
+      outline:none;
     }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 0.4rem 0.5rem;
-      vertical-align: top;
+    select:focus{
+      border-color:#7aa7c7;
+      box-shadow:0 0 0 3px rgba(122,167,199,.25);
     }
-    th {
-      text-align: left;
-      font-weight: 600;
+
+    .actions{
+      display:flex;
+      gap:.5rem;
+      align-items:center;
+      flex: 0 0 auto;
     }
-    tr:nth-child(even) td {
-      background: #fafafa;
+
+    .btn{
+      border:1px solid #ccc;
+      background:#fff;
+      padding:.5rem .7rem;
+      border-radius:6px;
+      font-size:.9rem;
+      cursor:pointer;
     }
-    .small {
-      font-size: 0.8rem;
-      color: #555;
+    .btn:hover{ background:#fafafa; }
+    .hint{
+      font-size:.8rem;
+      color:#555;
+      margin-top:.25rem;
     }
-    .badge {
-      display: inline-block;
-      padding: 0.1rem 0.35rem;
-      margin-right: 0.25rem;
-      border-radius: 3px;
-      background: #e5eff8;
-      font-size: 0.7rem;
+
+    /* =========================
+       Table
+    ========================= */
+    .table-wrap{
+      background:#fff;
+      border:1px solid #ddd;
+      border-radius:10px;
+      overflow:auto;
     }
-    .highlight {
-      background: #fff3cd;
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#fff;
+      font-size:.86rem;
+      min-width: 1200px;
     }
-    @media (max-width: 900px) {
-      th, td {
-        font-size: 0.78rem;
-      }
-      header, main {
-        padding-left: 1rem;
-        padding-right: 1rem;
-      }
+
+    thead{
+      position:sticky;
+      top:0;
+      z-index:1;
+      background:#e5eff8;
+    }
+
+    th, td{
+      border-bottom:1px solid #eee;
+      border-right:1px solid #eee;
+      padding:.55rem .6rem;
+      vertical-align:top;
+    }
+    th:last-child, td:last-child{ border-right:none; }
+
+    th{
+      text-align:left;
+      font-weight:650;
+      white-space:nowrap;
+    }
+
+    tbody tr:nth-child(even) td{ background:#fafafa; }
+
+    .small{
+      font-size:.82rem;
+      color:#555;
+    }
+
+    /* =========================
+       Badges (clickable)
+    ========================= */
+    .badge-btn{
+      display:inline-block;
+      border:1px solid transparent;
+      padding:.16rem .42rem;
+      margin:0 .25rem .25rem 0;
+      border-radius:999px;
+      background:#e5eff8;
+      font-size:.72rem;
+      line-height:1.2;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .badge-btn:hover{
+      border-color:#7aa7c7;
+    }
+    .badge-btn:focus{
+      outline:none;
+      box-shadow:0 0 0 3px rgba(122,167,199,.25);
+    }
+
+    .meta{
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+      margin:.5rem 0 0;
+      color:#555;
+      font-size:.82rem;
+    }
+    .meta strong{ color:#222; }
+
+    @media (max-width: 900px){
+      header, main{ padding-left:1rem; padding-right:1rem; }
+      .actions{ width:100%; justify-content:flex-start; }
+      table{ font-size:.82rem; }
     }
   </style>
 </head>
+
 <body>
 <header>
   <h1>Zorgbundels & Probleemgebieden</h1>
-  <p>Probleemgestuurde zorgbundels met medisch lexicon, patiënten-lexicon en kernbouwstenen.</p>
+  <p>Zoek in probleemgebied/zorgbundel, medisch lexicon of patiëntenwoorden. Klik op een badge om direct te filteren.</p>
 </header>
 
 <main>
-  <section class="controls">
-    <input type="text" id="searchInput" placeholder="Zoek in probleemgebied, medisch lexicon of patiëntenwoorden…">
-    <label class="small">
-      Filter op type lexicon:
-      <select id="lexiconFilter">
-        <option value="all">Alles</option>
-        <option value="medisch">Alleen medisch lexicon</option>
-        <option value="patient">Alleen patiënten-lexicon</option>
+  <section class="controls" aria-label="Zoeken en filteren">
+    <div class="field">
+      <label for="searchInput">Zoekterm(en)</label>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder='Voorbeeld: diabetes hypo  |  "hoge bloeddruk"  |  valrisico'
+        autocomplete="off"
+      />
+      <div class="hint">Tip: gebruik <strong>quotes</strong> voor woordgroepen. Enter = zoeken, Esc = wissen.</div>
+    </div>
+
+    <div class="field" style="flex:0 0 280px; min-width:240px;">
+      <label for="scopeSelect">Zoek in</label>
+      <select id="scopeSelect">
+        <option value="all">Alles (titel + lexicons + bouwstenen)</option>
+        <option value="naam">Alleen probleemgebied / zorgbundel (titel)</option>
+        <option value="medisch">Alleen medisch lexicon + titel</option>
+        <option value="patient">Alleen patiënten-lexicon + titel</option>
       </select>
-    </label>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="clearBtn" type="button">Wissen</button>
+      <button class="btn" id="showAllBtn" type="button">Toon alles</button>
+    </div>
   </section>
 
-  <table id="zorgbundelsTable">
-    <thead>
-      <tr>
-        <th>Nr</th>
-        <th>Probleemgebied / Zorgbundel</th>
-        <th>Medisch lexicon (detectie)</th>
-        <th>Patiënten-lexicon (eigen woorden)</th>
-        <th class="small">Klinische opvolging</th>
-        <th class="small">Educatie & instructie</th>
-        <th class="small">Functioneel & praktisch</th>
-        <th class="small">Coördinatie & afstemming</th>
-        <th class="small">Monitoring & escalatie</th>
-        <th class="small">Noodzakelijke zorgverleners</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Rijen worden via JavaScript ingevuld -->
-    </tbody>
-  </table>
+  <div class="meta" aria-live="polite">
+    <span>Resultaten: <strong id="resultCount">0</strong></span>
+    <span>•</span>
+    <span>Klik op een badge om te zoeken binnen dat lexicon.</span>
+  </div>
+
+  <div class="table-wrap" role="region" aria-label="Tabel zorgbundels" tabindex="0">
+    <table id="zorgbundelsTable">
+      <thead>
+        <tr>
+          <th>Nr</th>
+          <th>Probleemgebied / Zorgbundel</th>
+          <th>Medisch lexicon (detectie)</th>
+          <th>Patiënten-lexicon (eigen woorden)</th>
+          <th class="small">Klinische opvolging</th>
+          <th class="small">Educatie & instructie</th>
+          <th class="small">Functioneel & praktisch</th>
+          <th class="small">Coördinatie & afstemming</th>
+          <th class="small">Monitoring & escalatie</th>
+          <th class="small">Noodzakelijke zorgverleners</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- rows injected by JS -->
+      </tbody>
+    </table>
+  </div>
 </main>
 
 <script>
-  // DATA: alle probleemgebieden + zorgbundels
+  // =========================
+  // DATA
+  // =========================
   const zorgbundels = [
     {
       nr: 1,
@@ -521,66 +649,155 @@
     }
   ];
 
-  // Hulpfunctie om een lijst woorden netjes te tonen
-  function renderList(list) {
-    return list.map(term => `<span class="badge">${term}</span>`).join(" ");
+  // =========================
+  // DOM
+  // =========================
+  const tbody = document.querySelector("#zorgbundelsTable tbody");
+  const searchInput = document.getElementById("searchInput");
+  const scopeSelect = document.getElementById("scopeSelect");
+  const clearBtn = document.getElementById("clearBtn");
+  const showAllBtn = document.getElementById("showAllBtn");
+  const resultCount = document.getElementById("resultCount");
+
+  // =========================
+  // Helpers
+  // =========================
+  const esc = (s) =>
+    String(s ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+  function normalize(str){
+    return String(str || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, ""); // accent-insensitive
   }
 
-  function renderTableRows(filterText = "", filterType = "all") {
-    const tbody = document.querySelector("#zorgbundelsTable tbody");
+  // Tokens met quotes:  diabetes hypo  |  "hoge bloeddruk"
+  function tokenize(query){
+    const q = query.trim();
+    if(!q) return [];
+    const tokens = [];
+    const re = /"([^"]+)"|(\S+)/g;
+    let m;
+    while((m = re.exec(q)) !== null){
+      tokens.push(normalize(m[1] || m[2]));
+    }
+    return tokens.filter(Boolean);
+  }
+
+  function haystacks(zb){
+    const naam = normalize(zb.naam);
+    const med = normalize(zb.medischLexicon.join(" "));
+    const pat = normalize(zb.patientLexicon.join(" "));
+    const all = normalize([
+      zb.naam,
+      zb.medischLexicon.join(" "),
+      zb.patientLexicon.join(" "),
+      zb.klinisch,
+      zb.educatie,
+      zb.functioneel,
+      zb.coordinatie,
+      zb.monitoring,
+      zb.zorgverleners
+    ].join(" "));
+    return { naam, med, pat, all };
+  }
+
+  function matchesAllTokens(haystack, tokens){
+    return tokens.every(t => haystack.includes(t));
+  }
+
+  function renderBadges(list, type){
+    return list.map(term => `
+      <button
+        type="button"
+        class="badge-btn"
+        data-type="${type}"
+        data-term="${esc(term)}"
+        title="Klik om hierop te zoeken"
+      >${esc(term)}</button>
+    `).join(" ");
+  }
+
+  // =========================
+  // Render
+  // =========================
+  function render(){
+    const query = searchInput.value;
+    const tokens = tokenize(query);
+    const scope = scopeSelect.value; // all | naam | medisch | patient
+
     tbody.innerHTML = "";
-    const text = filterText.trim().toLowerCase();
+    let count = 0;
 
-    zorgbundels.forEach(zb => {
-      const med = zb.medischLexicon.join(" ").toLowerCase();
-      const pat = zb.patientLexicon.join(" ").toLowerCase();
-      const naam = zb.naam.toLowerCase();
+    for(const zb of zorgbundels){
+      const hs = haystacks(zb);
 
-      let match = true;
-      if (text) {
-        if (filterType === "medisch") {
-          match = med.includes(text) || naam.includes(text);
-        } else if (filterType === "patient") {
-          match = pat.includes(text) || naam.includes(text);
-        } else {
-          match = med.includes(text) || pat.includes(text) || naam.includes(text);
-        }
-      }
+      let searchable = hs.all;
+      if(scope === "naam") searchable = hs.naam;
+      if(scope === "medisch") searchable = hs.naam + " " + hs.med;
+      if(scope === "patient") searchable = hs.naam + " " + hs.pat;
 
-      if (!match) return;
+      const ok = tokens.length === 0 ? true : matchesAllTokens(searchable, tokens);
+      if(!ok) continue;
 
       const tr = document.createElement("tr");
-
       tr.innerHTML = `
-        <td>${zb.nr}</td>
-        <td>${zb.naam}</td>
-        <td>${renderList(zb.medischLexicon)}</td>
-        <td>${renderList(zb.patientLexicon)}</td>
-        <td class="small">${zb.klinisch}</td>
-        <td class="small">${zb.educatie}</td>
-        <td class="small">${zb.functioneel}</td>
-        <td class="small">${zb.coordinatie}</td>
-        <td class="small">${zb.monitoring}</td>
-        <td class="small">${zb.zorgverleners}</td>
+        <td>${esc(zb.nr)}</td>
+        <td>${esc(zb.naam)}</td>
+        <td>${renderBadges(zb.medischLexicon, "medisch")}</td>
+        <td>${renderBadges(zb.patientLexicon, "patient")}</td>
+        <td class="small">${esc(zb.klinisch)}</td>
+        <td class="small">${esc(zb.educatie)}</td>
+        <td class="small">${esc(zb.functioneel)}</td>
+        <td class="small">${esc(zb.coordinatie)}</td>
+        <td class="small">${esc(zb.monitoring)}</td>
+        <td class="small">${esc(zb.zorgverleners)}</td>
       `;
       tbody.appendChild(tr);
-    });
+      count++;
+    }
+
+    resultCount.textContent = String(count);
   }
 
-  // Initiale rendering
-  renderTableRows();
+  function setSearch(term, scope){
+    searchInput.value = term || "";
+    if(scope) scopeSelect.value = scope;
+    render();
+    searchInput.focus();
+  }
 
-  // Zoek- en filterfunctionaliteit
-  const searchInput = document.getElementById("searchInput");
-  const lexiconFilter = document.getElementById("lexiconFilter");
+  // =========================
+  // Events
+  // =========================
+  searchInput.addEventListener("input", render);
+  scopeSelect.addEventListener("change", render);
 
-  searchInput.addEventListener("input", () => {
-    renderTableRows(searchInput.value, lexiconFilter.value);
+  clearBtn.addEventListener("click", () => setSearch("", "all"));
+  showAllBtn.addEventListener("click", () => setSearch("", scopeSelect.value));
+
+  searchInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") render();
+    if(e.key === "Escape") setSearch("", "all");
   });
 
-  lexiconFilter.addEventListener("change", () => {
-    renderTableRows(searchInput.value, lexiconFilter.value);
+  // Badge click = direct zoeken binnen juiste scope
+  tbody.addEventListener("click", (e) => {
+    const btn = e.target.closest(".badge-btn");
+    if(!btn) return;
+    const term = btn.getAttribute("data-term") || "";
+    const type = btn.getAttribute("data-type") || "all";
+    setSearch(term, type === "medisch" ? "medisch" : "patient");
   });
+
+  // Initial render
+  render();
 </script>
 </body>
 </html>
