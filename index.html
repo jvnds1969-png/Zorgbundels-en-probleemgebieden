@@ -1,39 +1,430 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Zorgbundels – Probleemgebieden, Lexicon en Zorg</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zorgbundels Zorgstart – Compleet Overzicht met Bronnen</title>
   <style>
-    /* =========================
-       Base
-    ========================= */
-    * { box-sizing: border-box; }
-
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:#f5f5f5;
-      color:#222;
-      line-height:1.4;
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+      color: #1a202c;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #005b96 0%, #0077b6 100%);
+      color: #fff;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    header h1 {
+      margin: 0 0 0.25rem 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+    header p {
+      margin: 0;
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+    main {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem 2rem;
+    }
+    
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      align-items: center;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .controls input[type="text"] {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      flex: 1 1 280px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      transition: border-color 0.2s;
+    }
+    .controls input[type="text"]:focus {
+      outline: none;
+      border-color: #005b96;
+      box-shadow: 0 0 0 3px rgba(0,91,150,0.1);
+    }
+    .controls select {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .controls label {
+      font-size: 0.85rem;
+      color: #4a5568;
+    }
+    
+    /* Info banner */
+    .info-banner {
+      background: linear-gradient(135deg, #e8f4fd 0%, #f0f9ff 100%);
+      border: 1px solid #b8daff;
+      border-left: 4px solid #005b96;
+      border-radius: 6px;
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      color: #004085;
+    }
+    .info-banner .icon {
+      font-size: 1.4rem;
+    }
+    
+    /* Tabel */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      font-size: 0.85rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    thead {
+      position: sticky;
+      top: 0;
+      background: #e5eff8;
+      z-index: 10;
+    }
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 0.6rem 0.75rem;
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+    
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      margin: 0.1rem;
+      border-radius: 4px;
+      background: #e5eff8;
+      font-size: 0.7rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      color: #2d3748;
+    }
+    .badge:hover {
+      background: #005b96;
+      color: #fff;
+    }
+    
+    /* Uitklapbare rij */
+    .expandable-row {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .expandable-row:hover {
+      background: #f7fafc;
+    }
+    .expandable-row:nth-child(4n+1) td {
+      background: #fff;
+    }
+    .expandable-row:nth-child(4n+3) td {
+      background: #fafbfc;
+    }
+    .expand-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      font-weight: bold;
+      color: #fff;
+      background: #005b96;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: transform 0.3s, background 0.2s;
+    }
+    .expandable-row:hover .expand-icon {
+      background: #004080;
+    }
+    .expandable-row.open .expand-icon {
+      transform: rotate(90deg);
+      background: #0077b6;
+    }
+    .bundel-naam {
+      font-weight: 600;
+      color: #1a202c;
+    }
+    .bundel-nr {
+      color: #718096;
+      font-size: 0.75rem;
+      margin-left: 0.25rem;
+    }
+    
+    /* Detail rij */
+    .detail-row {
+      display: none;
+    }
+    .detail-row.show {
+      display: table-row;
+    }
+    .detail-row td {
+      background: #f8fafc;
+      padding: 0;
+      border-left: 4px solid #005b96;
+    }
+    .detail-content {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      padding: 1.5rem;
+    }
+    .detail-section {
+      background: #fff;
+      padding: 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+    }
+    .detail-section h4 {
+      margin: 0 0 0.75rem 0;
+      font-size: 0.9rem;
+      color: #005b96;
+      border-bottom: 2px solid #e5eff8;
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .detail-section h4 .section-icon {
+      font-size: 1.1rem;
+    }
+    .detail-section p, .detail-section ul {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+    .detail-section ul {
+      padding-left: 1.25rem;
+      margin-top: 0.5rem;
+    }
+    .detail-section li {
+      margin-bottom: 0.4rem;
+    }
+    
+    /* Rode vlaggen */
+    .rode-vlaggen {
+      background: #fff5f5;
+      border-color: #fed7d7;
+    }
+    .rode-vlaggen h4 {
+      color: #c53030;
+    }
+    .rode-vlaggen ul {
+      padding-left: 0;
+      list-style: none;
+    }
+    .rode-vlaggen li {
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #fee2e2;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .rode-vlaggen li:last-child {
+      border-bottom: none;
+    }
+    .rode-vlaggen .vlag-icon {
+      flex-shrink: 0;
+    }
+    
+    /* Bronnen sectie */
+    .bronnen-section {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, #fffef5 0%, #fefce8 100%);
+      border: 1px solid #e8e4c9;
+    }
+    .bronnen-section h4 {
+      color: #92400e;
+    }
+    .bronnen-lijst {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 0.75rem;
+    }
+    .bronnen-lijst li {
+      padding: 0.85rem;
+      background: #fff;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      font-size: 0.8rem;
+      transition: box-shadow 0.2s;
+    }
+    .bronnen-lijst li:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .bron-naam {
+      font-weight: 600;
+      color: #1f2937;
+      display: block;
+      margin-bottom: 0.35rem;
+      line-height: 1.4;
+    }
+    .bron-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+    .bron-type {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.025em;
+    }
+    .bron-type.richtlijn { background: #d1fae5; color: #065f46; }
+    .bron-type.review { background: #dbeafe; color: #1e40af; }
+    .bron-type.rapport { background: #fef3c7; color: #92400e; }
+    .bron-type.standaard { background: #e5e7eb; color: #374151; }
+    .bron-type.advies { background: #fce7f3; color: #9d174d; }
+    .bron-type.framework { background: #cffafe; color: #155e75; }
+    .bron-type.artikel { background: #ede9fe; color: #5b21b6; }
+    .bron-type.kwaliteitskader { background: #f3e8ff; color: #6b21a8; }
+    .bron-jaar {
+      color: #6b7280;
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+    .bron-kernboodschap {
+      display: block;
+      color: #4b5563;
+      font-style: italic;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      margin-top: 0.25rem;
     }
 
-    header{
-      background:#005b96;
-      color:#fff;
-      padding:1rem 2rem;
+    /* Zorgverleners tags */
+    .zorgverleners-lijst {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.5rem;
     }
-    header h1{
-      margin:0 0 .25rem 0;
-      font-size:1.5rem;
-    }
-    header p{
-      margin:0;
-      font-size:.95rem;
-      opacity:.9;
+    .zorgverlener-tag {
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 500;
     }
 
+    /* Stats */
+    .stats-bar {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      background: #fff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #005b96;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .detail-content {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 900px) {
+      th, td {
+        font-size: 0.78rem;
+        padding: 0.4rem 0.5rem;
+      }
+      header, main {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      .bronnen-lijst {
+        grid-template-columns: 1fr;
+      }
+      .stats-bar {
+        gap: 0.75rem;
+      }
+      .stat-item {
+        flex: 1 1 140px;
+      }
+    }
+    @media (max-width: 600px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .controls input[type="text"] {
+        flex: 1 1 auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📋 Zorgbundels Zorgstart</h1>
+  <p>Compleet overzicht van alle probleemgestuurde zorgbundels met medisch lexicon, patiënten-lexicon, interventies en wetenschappelijke bronnen.</p>
+</header>
+
+<main>
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat
     main{ padding:1rem 2rem 2rem; }
 
     /* =========================
