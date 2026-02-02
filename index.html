@@ -1200,11 +1200,9 @@
   // Events
   // =========================
   searchInput.addEventListener("input", render);
-  scopeSelect.addEventListener("change", render);
-
-  clearBtn.addEventListener("click", () => setSearch("", "all"));
-  showAllBtn.addEventListener("click", () => setSearch("", scopeSelect.value));
-
+// scopeSelect.addEventListener("change", render);
+// clearBtn.addEventListener("click", () => setSearch("", "all"));
+  // showAllBtn.addEventListener("click", () => setSearch("", scopeSelect.value));
   searchInput.addEventListener("keydown", (e) => {
     if(e.key === "Enter") render();
     if(e.key === "Escape") setSearch("", "all");
