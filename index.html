@@ -1,1328 +1,654 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zorgbundels Zorgstart – Compleet Overzicht met Bronnen</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Zorgbundels Zorgstart – Compleet Overzicht</title>
+
   <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f7fa;
-      color: #1a202c;
-      line-height: 1.6;
-    }
-    header {
-      background: linear-gradient(135deg, #005b96 0%, #0077b6 100%);
-      color: #fff;
-      padding: 1.5rem 2rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    }
-    header h1 {
-      margin: 0 0 0.25rem 0;
-      font-size: 1.75rem;
-      font-weight: 700;
-    }
-    header p {
-      margin: 0;
-      font-size: 0.95rem;
-      opacity: 0.9;
-    }
-    main {
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 1.5rem 2rem 3rem 2rem;
-    }
-    
-    /* Controls */
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
-      align-items: center;
-      background: #fff;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    }
-    .controls input[type="text"] {
-      padding: 0.5rem 0.75rem;
-      font-size: 0.9rem;
-      flex: 1 1 280px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      transition: border-color 0.2s;
-    }
-    .controls input[type="text"]:focus {
-      outline: none;
-      border-color: #005b96;
-      box-shadow: 0 0 0 3px rgba(0,91,150,0.1);
-    }
-    .controls select {
-      padding: 0.5rem 0.75rem;
-      font-size: 0.9rem;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      background: #fff;
-    }
-    .controls label {
-      font-size: 0.85rem;
-      color: #4a5568;
-    }
-    
-    /* Info banner */
-    .info-banner {
-      background: linear-gradient(135deg, #e8f4fd 0%, #f0f9ff 100%);
-      border: 1px solid #b8daff;
-      border-left: 4px solid #005b96;
-      border-radius: 6px;
-      padding: 0.85rem 1.25rem;
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.9rem;
-      color: #004085;
-    }
-    .info-banner .icon {
-      font-size: 1.4rem;
-    }
-    
-    /* Tabel */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      font-size: 0.85rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    thead {
-      position: sticky;
-      top: 0;
-      background: #e5eff8;
-      z-index: 10;
-    }
-    th, td {
-      border: 1px solid #e2e8f0;
-      padding: 0.6rem 0.75rem;
-      vertical-align: top;
-      text-align: left;
-    }
-    th {
-      font-weight: 600;
-      color: #2d3748;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.025em;
-    }
-    
-    /* Badges */
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.5rem;
-      margin: 0.1rem;
-      border-radius: 4px;
-      background: #e5eff8;
-      font-size: 0.7rem;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s;
-      color: #2d3748;
-    }
-    .badge:hover {
-      background: #005b96;
-      color: #fff;
-    }
-    
-    /* Uitklapbare rij */
-    .expandable-row {
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .expandable-row:hover {
-      background: #f7fafc;
-    }
-    .expandable-row:nth-child(4n+1) td {
-      background: #fff;
-    }
-    .expandable-row:nth-child(4n+3) td {
-      background: #fafbfc;
-    }
-    .expand-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.75rem;
-      height: 1.75rem;
-      font-weight: bold;
-      color: #fff;
-      background: #005b96;
-      border-radius: 6px;
-      font-size: 1rem;
-      transition: transform 0.3s, background 0.2s;
-    }
-    .expandable-row:hover .expand-icon {
-      background: #004080;
-    }
-    .expandable-row.open .expand-icon {
-      transform: rotate(90deg);
-      background: #0077b6;
-    }
-    .bundel-naam {
-      font-weight: 600;
-      color: #1a202c;
-    }
-    .bundel-nr {
-      color: #718096;
-      font-size: 0.75rem;
-      margin-left: 0.25rem;
-    }
-    
-    /* Detail rij */
-    .detail-row {
-      display: none;
-    }
-    .detail-row.show {
-      display: table-row;
-    }
-    .detail-row td {
-      background: #f8fafc;
-      padding: 0;
-      border-left: 4px solid #005b96;
-    }
-    .detail-content {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.25rem;
-      padding: 1.5rem;
-    }
-    .detail-section {
-      background: #fff;
-      padding: 1.25rem;
-      border-radius: 8px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-      border: 1px solid #e2e8f0;
-    }
-    .detail-section h4 {
-      margin: 0 0 0.75rem 0;
-      font-size: 0.9rem;
-      color: #005b96;
-      border-bottom: 2px solid #e5eff8;
-      padding-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .detail-section h4 .section-icon {
-      font-size: 1.1rem;
-    }
-    .detail-section p, .detail-section ul {
-      margin: 0;
-      font-size: 0.85rem;
-      color: #4a5568;
-      line-height: 1.6;
-    }
-    .detail-section ul {
-      padding-left: 1.25rem;
-      margin-top: 0.5rem;
-    }
-    .detail-section li {
-      margin-bottom: 0.4rem;
-    }
-    
-    /* Rode vlaggen */
-    .rode-vlaggen {
-      background: #fff5f5;
-      border-color: #fed7d7;
-    }
-    .rode-vlaggen h4 {
-      color: #c53030;
-    }
-    .rode-vlaggen ul {
-      padding-left: 0;
-      list-style: none;
-    }
-    .rode-vlaggen li {
-      padding: 0.4rem 0;
-      border-bottom: 1px solid #fee2e2;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
-    .rode-vlaggen li:last-child {
-      border-bottom: none;
-    }
-    .rode-vlaggen .vlag-icon {
-      flex-shrink: 0;
-    }
-    
-    /* Bronnen sectie */
-    .bronnen-section {
-      grid-column: 1 / -1;
-      background: linear-gradient(135deg, #fffef5 0%, #fefce8 100%);
-      border: 1px solid #e8e4c9;
-    }
-    .bronnen-section h4 {
-      color: #92400e;
-    }
-    .bronnen-lijst {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 0.75rem;
-    }
-    .bronnen-lijst li {
-      padding: 0.85rem;
-      background: #fff;
-      border-radius: 6px;
-      border: 1px solid #e5e7eb;
-      font-size: 0.8rem;
-      transition: box-shadow 0.2s;
-    }
-    .bronnen-lijst li:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    .bron-naam {
-      font-weight: 600;
-      color: #1f2937;
-      display: block;
-      margin-bottom: 0.35rem;
-      line-height: 1.4;
-    }
-    .bron-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-    .bron-type {
-      display: inline-block;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.025em;
-    }
-    .bron-type.richtlijn { background: #d1fae5; color: #065f46; }
-    .bron-type.review { background: #dbeafe; color: #1e40af; }
-    .bron-type.rapport { background: #fef3c7; color: #92400e; }
-    .bron-type.standaard { background: #e5e7eb; color: #374151; }
-    .bron-type.advies { background: #fce7f3; color: #9d174d; }
-    .bron-type.framework { background: #cffafe; color: #155e75; }
-    .bron-type.artikel { background: #ede9fe; color: #5b21b6; }
-    .bron-type.kwaliteitskader { background: #f3e8ff; color: #6b21a8; }
-    .bron-jaar {
-      color: #6b7280;
-      font-size: 0.7rem;
-      font-weight: 500;
-    }
-    .bron-kernboodschap {
-      display: block;
-      color: #4b5563;
-      font-style: italic;
-      font-size: 0.75rem;
-      line-height: 1.5;
-      margin-top: 0.25rem;
+    *{ box-sizing:border-box; }
+    body{
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      margin:0;
+      background:#f5f7fa;
+      color:#1a202c;
+      line-height:1.6;
     }
 
-    /* Zorgverleners tags */
-    .zorgverleners-lijst {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      margin-top: 0.5rem;
+    header{
+      background: linear-gradient(135deg,#005b96 0%,#0077b6 100%);
+      color:#fff;
+      padding:1.25rem 1.5rem;
+      box-shadow:0 2px 8px rgba(0,0,0,.15);
     }
-    .zorgverlener-tag {
-      background: #e0f2fe;
-      color: #0369a1;
-      padding: 0.25rem 0.6rem;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 500;
+    header h1{ margin:0 0 .25rem 0; font-size:1.6rem; font-weight:750; }
+    header p{ margin:0; font-size:.95rem; opacity:.92; }
+
+    main{
+      max-width: 1600px;
+      margin:0 auto;
+      padding: 1.25rem 1.5rem 2.5rem;
     }
+
+    /* Info banner */
+    .info-banner{
+      background: linear-gradient(135deg,#e8f4fd 0%,#f0f9ff 100%);
+      border:1px solid #b8daff;
+      border-left:4px solid #005b96;
+      border-radius:8px;
+      padding:.85rem 1rem;
+      margin: 0 0 1rem 0;
+      display:flex;
+      gap:.75rem;
+      align-items:flex-start;
+      color:#004085;
+      font-size:.92rem;
+    }
+    .info-banner .icon{ font-size:1.25rem; margin-top:.1rem; }
 
     /* Stats */
-    .stats-bar {
-      display: flex;
-      gap: 1.5rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-    .stat-item {
-      background: #fff;
-      padding: 0.75rem 1.25rem;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .stat-number {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #005b96;
-    }
-    .stat-label {
-      font-size: 0.8rem;
-      color: #64748b;
-    }
-
-    /* Responsive */
-    @media (max-width: 1200px) {
-      .detail-content {
-        grid-template-columns: 1fr;
-      }
-    }
-    @media (max-width: 900px) {
-      th, td {
-        font-size: 0.78rem;
-        padding: 0.4rem 0.5rem;
-      }
-      header, main {
-        padding-left: 1rem;
-        padding-right: 1rem;
-      }
-      .bronnen-lijst {
-        grid-template-columns: 1fr;
-      }
-      .stats-bar {
-        gap: 0.75rem;
-      }
-      .stat-item {
-        flex: 1 1 140px;
-      }
-    }
-    @media (max-width: 600px) {
-      .controls {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .controls input[type="text"] {
-        flex: 1 1 auto;
-      }
-    }
-  
-  </style>
-</head>
-<body>
-  <p>Compleet overzicht van alle probleemgestuurde zorgbundels met medisch lexicon, patiënten-lexicon, interventies en wetenschappelijke bronnen.</p>
-</header>
-
-<main>
-  <!-- Stats -->
-  <div class="stats-bar">
-    <div class="stat-item">
-      <span class="stat
-    main{ padding:1rem 2rem 2rem; }
-
-    /* =========================
-       Controls
-    ========================= */
-    .controls{
+    .stats-bar{
       display:flex;
+      gap:.75rem;
       flex-wrap:wrap;
-      gap:1rem;
-      align-items:flex-end;
+      margin: 0 0 1rem 0;
+    }
+    .stat-item{
+      background:#fff;
+      padding:.75rem 1rem;
+      border-radius:10px;
+      box-shadow:0 1px 3px rgba(0,0,0,.08);
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+      min-width: 190px;
+    }
+    .stat-number{ font-size:1.5rem; font-weight:800; color:#005b96; line-height:1; }
+    .stat-label{ font-size:.82rem; color:#64748b; }
+
+    /* Controls */
+    .controls{
+      display:grid;
+      grid-template-columns: 1.6fr .6fr auto;
+      gap: .75rem;
+      align-items:end;
+      background:#fff;
+      padding:1rem;
+      border-radius:10px;
+      box-shadow:0 1px 3px rgba(0,0,0,.08);
       margin-bottom:1rem;
     }
-
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:.35rem;
-      min-width: 220px;
-      flex:1 1 320px;
-    }
-
-    label{
-      font-size:.82rem;
-      color:#444;
-    }
-
-    input[type="text"]{
+    .field{ display:flex; flex-direction:column; gap:.35rem; }
+    label{ font-size:.82rem; color:#4a5568; }
+    input[type="text"], select{
       padding:.55rem .65rem;
       font-size:.95rem;
-      border:1px solid #ccc;
-      border-radius:6px;
+      border:1px solid #d1d5db;
+      border-radius:8px;
       background:#fff;
       outline:none;
     }
-    input[type="text"]:focus{
-      border-color:#7aa7c7;
-      box-shadow:0 0 0 3px rgba(122,167,199,.25);
+    input[type="text"]:focus, select:focus{
+      border-color:#005b96;
+      box-shadow:0 0 0 3px rgba(0,91,150,.12);
     }
-
-    select{
-      padding:.52rem .6rem;
-      font-size:.95rem;
-      border:1px solid #ccc;
-      border-radius:6px;
-      background:#fff;
-      outline:none;
-    }
-    select:focus{
-      border-color:#7aa7c7;
-      box-shadow:0 0 0 3px rgba(122,167,199,.25);
-    }
-
-    .actions{
+    .controls-actions{
       display:flex;
       gap:.5rem;
-      align-items:center;
-      flex: 0 0 auto;
+      justify-content:flex-end;
+      flex-wrap:wrap;
     }
-
     .btn{
-      border:1px solid #ccc;
+      border:1px solid #d1d5db;
       background:#fff;
-      padding:.5rem .7rem;
-      border-radius:6px;
+      padding:.55rem .75rem;
+      border-radius:8px;
       font-size:.9rem;
       cursor:pointer;
+      transition: transform .02s ease, background .15s ease;
+      white-space:nowrap;
     }
-    .btn:hover{ background:#fafafa; }
+    .btn:hover{ background:#f8fafc; }
+    .btn:active{ transform: translateY(1px); }
+
     .hint{
-      font-size:.8rem;
-      color:#555;
+      grid-column: 1 / -1;
+      font-size:.82rem;
+      color:#64748b;
       margin-top:.25rem;
     }
 
-    /* =========================
-       Table
-    ========================= */
+    /* Table */
     .table-wrap{
       background:#fff;
-      border:1px solid #ddd;
-      border-radius:10px;
+      border:1px solid #e2e8f0;
+      border-radius:12px;
       overflow:auto;
+      box-shadow:0 1px 3px rgba(0,0,0,.08);
     }
-
     table{
       width:100%;
       border-collapse:collapse;
-      background:#fff;
+      min-width: 1280px;
       font-size:.86rem;
-      min-width: 1200px;
     }
-
     thead{
       position:sticky;
       top:0;
-      z-index:1;
+      z-index:5;
       background:#e5eff8;
     }
-
     th, td{
-      border-bottom:1px solid #eee;
-      border-right:1px solid #eee;
-      padding:.55rem .6rem;
+      border-bottom:1px solid #e2e8f0;
+      border-right:1px solid #e2e8f0;
+      padding:.6rem .65rem;
       vertical-align:top;
+      text-align:left;
     }
     th:last-child, td:last-child{ border-right:none; }
-
     th{
-      text-align:left;
-      font-weight:650;
+      font-weight:750;
+      color:#2d3748;
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.03em;
       white-space:nowrap;
     }
+    tbody tr:nth-child(even) td{ background:#fafbfc; }
 
-    tbody tr:nth-child(even) td{ background:#fafafa; }
+    .small{ font-size:.82rem; color:#475569; }
 
-    .small{
-      font-size:.82rem;
-      color:#555;
-    }
-
-    /* =========================
-       Badges (clickable)
-    ========================= */
+    /* Badges */
     .badge-btn{
       display:inline-block;
       border:1px solid transparent;
-      padding:.16rem .42rem;
+      padding:.18rem .45rem;
       margin:0 .25rem .25rem 0;
       border-radius:999px;
       background:#e5eff8;
       font-size:.72rem;
-      line-height:1.2;
+      line-height:1.25;
       cursor:pointer;
       white-space:nowrap;
+      color:#1f2937;
     }
     .badge-btn:hover{
       border-color:#7aa7c7;
+      background:#dbeafe;
     }
     .badge-btn:focus{
       outline:none;
       box-shadow:0 0 0 3px rgba(122,167,199,.25);
     }
 
-    .meta{
-      display:flex;
-      align-items:center;
-      gap:.75rem;
-      margin:.5rem 0 0;
-      color:#555;
-      font-size:.82rem;
+    /* Data sections grid */
+    .sections{
+      margin-top: 1.25rem;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
     }
-    .meta strong{ color:#222; }
+    .data-section{
+      background:#fff;
+      border:1px solid #e2e8f0;
+      border-radius:12px;
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
+      overflow:hidden;
+    }
+    .data-section h2{
+      margin:0;
+      padding:.9rem 1rem;
+      background:#f8fafc;
+      border-bottom:1px solid #e2e8f0;
+      font-size:1rem;
+    }
+    .data-grid{
+      padding: 1rem;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:.75rem;
+    }
+    .data-item{
+      border:1px solid #e2e8f0;
+      border-radius:10px;
+      padding:.85rem;
+      background:#fff;
+    }
+    .data-item h3{
+      margin:0 0 .35rem 0;
+      font-size:.95rem;
+      color:#0f172a;
+      line-height:1.25;
+    }
+    .data-item p{
+      margin:.25rem 0 0 0;
+      font-size:.85rem;
+      color:#475569;
+    }
 
-    @media (max-width: 900px){
-      header, main{ padding-left:1rem; padding-right:1rem; }
-      .actions{ width:100%; justify-content:flex-start; }
-      table{ font-size:.82rem; }
+    /* Responsive */
+    @media (max-width: 1100px){
+      .controls{ grid-template-columns: 1fr 1fr; }
+      .controls-actions{ justify-content:flex-start; }
+      .sections{ grid-template-columns: 1fr; }
+      .data-grid{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px){
+      main{ padding-left:1rem; padding-right:1rem; }
+      header{ padding-left:1rem; padding-right:1rem; }
+      .controls{ grid-template-columns: 1fr; }
     }
   </style>
 </head>
 
 <body>
-<header>
-  <h1>Zorgbundels & Probleemgebieden</h1>
-  <p>Zoek in probleemgebied/zorgbundel, medisch lexicon of patiëntenwoorden. Klik op een badge om direct te filteren.</p>
-</header>
+  <header>
+    <h1>Zorgbundels & Probleemgebieden</h1>
+    <p>Zoek in probleemgebied/zorgbundel, medisch lexicon of patiëntenwoorden. Klik op een badge om direct te filteren.</p>
+  </header>
 
-<main>
-  <section class="controls" aria-label="Zoeken en filteren">
-    <div class="field">
-      <label for="searchInput">Zoekterm(en)</label>
-      <input
-        type="text"
-        id="searchInput"
-        placeholder='Voorbeeld: diabetes hypo  |  "hoge bloeddruk"  |  valrisico'
-        autocomplete="off"
-      />
-      <div class="hint">Tip: gebruik <strong>quotes</strong> voor woordgroepen. Enter = zoeken, Esc = wissen.</div>
+  <main>
+    <div class="info-banner">
+      <div class="icon">ℹ️</div>
+      <div>
+        Compleet overzicht van probleemgestuurde zorgbundels met medisch lexicon, patiënten-lexicon, interventies en (optioneel) bronnen.
+      </div>
     </div>
-  <div class="meta" aria-live="polite">
-    <span>Resultaten: <strong id="resultCount">0</strong></span>
-    <span>•</span>
-    <span>Klik op een badge om te zoeken binnen dat lexicon.</span>
-  </div>
 
-  <div class="table-wrap" role="region" aria-label="Tabel zorgbundels" tabindex="0">
-    <table id="zorgbundelsTable">
-      <thead>
-        <tr>
-          <th>Nr</th>
-          <th>Probleemgebied / Zorgbundel</th>
-          <th>Medisch lexicon (detectie)</th>
-          <th>Patiënten-lexicon (eigen woorden)</th>
-          <th class="small">Klinische opvolging</th>
-          <th class="small">Educatie & instructie</th>
-          <th class="small">Functioneel & praktisch</th>
-          <th class="small">Coördinatie & afstemming</th>
-          <th class="small">Monitoring & escalatie</th>
-          <th class="small">Noodzakelijke zorgverleners</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- rows injected by JS -->
-      </tbody>
-    </table>
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-number" id="statBundels">0</div>
+        <div class="stat-label">Zorgbundels</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="resultCount">0</div>
+        <div class="stat-label">Resultaten (tabel)</div>
+      </div>
+    </div>
 
-        <!-- Data Overview Sections -->
+    <!-- Controls -->
+    <section class="controls" aria-label="Zoeken en filteren">
+      <div class="field">
+        <label for="searchInput">Zoekterm(en)</label>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder='Voorbeeld: diabetes hypo  |  "hoge bloeddruk"  |  valrisico'
+          autocomplete="off"
+        />
+      </div>
 
-        <!-- Zorgbundels -->
-        <div class="data-section" id="zorgbundels-section">
-                <h2>📚 Zorgbundels</h2>
-                <div id="zorgbundelsDisplay"></div>
-              </div>
+      <div class="field">
+        <label for="scopeSelect">Zoeken binnen</label>
+        <select id="scopeSelect">
+          <option value="all">alles</option>
+          <option value="naam">naam</option>
+          <option value="medisch">medisch lexicon</option>
+          <option value="patient">patiënten-lexicon</option>
+        </select>
+      </div>
 
-        <!-- Aandachtsgebieden -->
-        <div class="data-section" id="aandachtsgebieden-section">
-                <h2>🎯 Aandachtsgebieden</h2>
-                <div id="aandachtsgebiedenDisplay"></div>
-              </div>
+      <div class="controls-actions">
+        <button class="btn" id="clearBtn" type="button">Wissen</button>
+        <button class="btn" id="showAllBtn" type="button">Toon alles</button>
+      </div>
 
-        <!-- Medisch Lexicon -->
-        <div class="data-section" id="lexicon-section">
-                <h2>📖 Medisch Lexicon</h2>
-                <div id="lexiconDisplay"></div>
-              </div>
+      <div class="hint">Tip: gebruik <strong>quotes</strong> voor woordgroepen. Enter = zoeken, Esc = wissen. Klik op een badge om binnen dat lexicon te filteren.</div>
+    </section>
 
-        <!-- Patiënten-lexicon -->
-        <div class="data-section" id="patientlexicon-section">
-                <h2>👥 Patiënten-lexicon</h2>
-                <div id="patientLexiconDisplay"></div>
-              </div>
+    <!-- Table -->
+    <div class="table-wrap" role="region" aria-label="Tabel zorgbundels" tabindex="0">
+      <table id="zorgbundelsTable">
+        <thead>
+          <tr>
+            <th>Nr</th>
+            <th>Probleemgebied / Zorgbundel</th>
+            <th>Medisch lexicon (detectie)</th>
+            <th>Patiënten-lexicon (eigen woorden)</th>
+            <th class="small">Klinische opvolging</th>
+            <th class="small">Educatie & instructie</th>
+            <th class="small">Functioneel & praktisch</th>
+            <th class="small">Coördinatie & afstemming</th>
+            <th class="small">Monitoring & escalatie</th>
+            <th class="small">Noodzakelijke zorgverleners</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+    </div>
 
-        <!-- Zorg- en/of dienstverleners -->
-        <div class="data-section" id="zorgverleners-section">
-                <h2>🥼 Zorg- en/of dienstverleners</h2>
-                <div id="zorgverlenersDisplay"></div>
-              </div>
+    <!-- Data Overview Sections in a clear grid -->
+    <section class="sections" aria-label="Data-overzicht">
+      <div class="data-section" id="zorgbundels-section">
+        <h2>📚 Zorgbundels</h2>
+        <div class="data-grid" id="zorgbundelsDisplay"></div>
+      </div>
 
-        <!-- Wetenschappelijke bronnen -->
-        <div class="data-section" id="bronnen-section">
-                <h2>📊 Wetenschappelijke bronnen</h2>
-                <div id="bronnenDisplay"></div>
-              </div>
-  </div>
-</main>
+      <div class="data-section" id="aandachtsgebieden-section">
+        <h2>🎯 Aandachtsgebieden</h2>
+        <div class="data-grid" id="aandachtsgebiedenDisplay"></div>
+      </div>
 
-<script>
+      <div class="data-section" id="lexicon-section">
+        <h2>📖 Medisch Lexicon</h2>
+        <div class="data-grid" id="lexiconDisplay"></div>
+      </div>
 
-  
-  // =========================
-  // DATA
-  // =========================
-  const zorgbundels = [
-    {
-      nr: 1,
-      naam: "Diabetes met verhoogd thuisrisico – Diabetes- & medicatie-opvolgbundel",
-      medischLexicon: [
-        "diabetes mellitus", "DM2", "insulinedependent", "insulinetherapie",
-        "orale antidiabetica", "hypoglycemie", "hyperglycemie", "labiele glycemie",
-        "ontregelde glycemie", "verhoogd HbA1c", "diabetische neuropathie",
-        "diabetische nefropathie", "diabetische voet", "glucosecontrole", "suikerziekte"
-      ],
-      patientLexicon: [
-        "Ik heb suikerziekte", "Mijn suiker schommelt", "Mijn suiker is vaak te hoog",
-        "Mijn suiker is vaak te laag", "Ik ben bang voor een hypo",
-        "Ik vergeet soms mijn suiker te meten", "Ik snap mijn insuline niet goed",
-        "Ik snap mijn medicatie niet goed", "Ik moet veel plassen ’s nachts",
-        "Ik ben vaak moe en draaierig"
-      ],
-      klinisch: "Glycemies (nuchter/postprandiaal), symptomen hypo/hyper, voetstatus, gewicht, algemene conditie.",
-      educatie: "Hypo-/hyperherkenning + actieplan, correcte glucosemeting, medicatieschema, dagelijkse voetinspectie.",
-      functioneel: "Glucosemeter, strips, weekdoos, duidelijke schema’s, hulp bij voeding en maaltijden.",
-      coordinatie: "Afstemming huisarts–POH/diabetesverpleegkundige–diëtist–thuisverpleging over streefwaarden en aanpassingen.",
-      monitoring: "Herhaalde hypo’s, glycemie >20 mmol/L, koorts + hoge glycemie, voetulcus of infectie → huisarts/wachtdienst; levensbedreigend → 112.",
-      zorgverleners: "Huisarts, POH/diabetesverpleegkundige, thuisverpleging, diëtist, podotherapeut/pedicure, apotheker."
-          bronnen: [
-          {naam: "NHG-Standaard Diabetes mellitus type 2", type: "richtlijn", jaar: 2024, boodschap: "Gestructureerde controles met HbA1c-streefwaarde, preventie complicaties, zelfmanagement"},
-          {naam: "IDF Diabetes Atlas 2023", type: "rapport", jaar: 2023, boodschap: "Global prevalentie, sociaal-economische impact, preventiestrategieën"},
-          {naam: "Diabetesfederatie – Zelfzorg na ziekenhuisopname", type: "advies", jaar: 2023, boodschap: "Zelfcontrole, educatie hypo/hyper, nazorgtraject met diabetesverpleegkundige"},
-          {naam: "ADA Standards of Medical Care in Diabetes", type: "richtlijn", jaar: 2024, boodschap: "Evidence-based aanbevelingen voor diagnostiek, behandeling, monitoring"},
-          {naam: "NICE Diabetes guidelines (Type 1 & 2)", type: "richtlijn", jaar: 2023, boodschap: "Bloedglucosecontrole, cardiovasculaire bescherming, voetenscreening"},
-          {naam: "Cochrane: Structured patient education for diabetes", type: "review", jaar: 2022, boodschap: "Educatie verbetert glycemische controle en kwaliteit van leven"},
-          {naam: "Diabetes UK – Hypo awareness", type: "advies", jaar: 2023, boodschap: "Herkenning en behandeling hypoglycemie, voorlichting patiënt en omgeving"}
-        ]
-    },
-    {
-      nr: 2,
-      naam: "Polyfarmacie & medicatieveiligheid – Medicatieveiligheidsbundel",
-      medischLexicon: [
-        "polyfarmacie", "multimedicatie", "≥5 medicaties", "medicatielijst",
-        "therapiewijziging", "wijziging medicatieschema", "bijwerkingen",
-        "nevenwerkingen", "medicatiefouten", "verkeerd ingenomen",
-        "medicatie-ontrouw", "non-compliance", "interacties", "STOPP/START",
-        "hoogrisico-medicatie"
-      ],
-      patientLexicon: [
-        "Ik neem heel veel pillen", "Ik weet niet meer waarvoor alles is",
-        "Mijn medicijnen zijn veranderd", "Ik neem soms iets verkeerd",
-        "Ik ben zo suf van mijn medicatie",
-        "Ik zie door de bomen het bos niet meer met al die pillen"
-      ],
-      klinisch: "Bijwerkingen (sufheid, verwardheid, vallen, hypotensie), therapietrouw, aantal medicaties.",
-      educatie: "Uitleg nieuw schema, gevaar dubbelgebruik/zelf stoppen, OTC/NSAID-risico, teach-back medicatie-inname.",
-      functioneel: "Weekdoos, visueel schema, alarmen of medicatierol, praktische hulp bij vullen.",
-      coordinatie: "Warme overdracht AMO; medicatiereview huisarts–huisapotheker; afstemming tussen voorschrijvers (STOPP/START).",
-      monitoring: "Geen AMO, dubbelgebruik, ernstige bijwerkingen, blijvend onbegrip → huisarts + huisapotheker; acute intoxicatie → 112.",
-      zorgverleners: "Huisarts, huisapotheker, thuisverpleging, POH/ouderen, eventueel geriater."
-          bronnen: [
-                  {naam: "KNMP Richtlijn Medicatiebeoordeling", type: "richtlijn", jaar: 2023, boodschap: "Systematische review van polyfarmacie, STOPP/START-criteria"},
-                  {naam: "NHG-Standaard Polyfarmacie bij ouderen", type: "richtlijn", jaar: 2024, boodschap: "Deprescribing, medicatiereview, samen beslissen met patiënt"},
-                  {naam: "HARM-wrestling taskforce – Preventie medicatiefouten", type: "advies", jaar: 2022, boodschap: "High-risk medicatie, dubbelchecks, warme overdracht apotheek"},
-                  {naam: "WHO Global Patient Safety Challenge – Medication Without Harm", type: "framework", jaar: 2022, boodschap: "Internationale richtlijn voor medicatieveiligheid, transitions of care"},
-                  {naam: "Cochrane: Interventions to improve medication adherence", type: "review", jaar: 2023, boodschap: "Multi-component interventies met educatie en tools verhogen therapietrouw"},
-                  {naam: "EMA Guidance on elderly and polypharmacy", type: "advies", jaar: 2023, boodschap: "Extra aandacht nierenfunctie, interacties, kwetsbare ouderen"}
-                ]
-    },
-    {
-      nr: 3,
-      naam: "Onzichtbaar cardiovasculair hoog risico – Cardiovasculaire preventiebundel",
-      medischLexicon: [
-        "hypertensie", "hoge bloeddruk", "dyslipidemie", "hypercholesterolemie",
-        "CVRM", "coronair lijden", "ischemische hartziekte",
-        "myocardinfarct in voorgeschiedenis", "CVA", "TIA",
-        "perifere vaatlijden", "obesitas", "BMI >30", "roker",
-        "familiaire cardiovasculaire belasting"
-      ],
-      patientLexicon: [
-        "Mijn bloeddruk is vaak te hoog",
-        "Ik heb hoge cholesterol",
-        "Ik rook nog",
-        "Ik beweeg bijna niet",
-        "Ik heb al eens een TIA gehad",
-        "Hart- en vaatziekten zitten in de familie"
-      ],
-      klinisch: "Bloeddruk, lipiden, gewicht, rookstatus, SCORE2(-OP)/CVRM-profiel.",
-      educatie: "Uitleg persoonlijk risico en nut van leefstijl (voeding, beweging, rookstop) en medicatie.",
-      functioneel: "Toeleiding GLI/beweegprogramma, rookstop, gezonde voeding, medicatieschema.",
-      coordinatie: "CVRM-spreekuur (POH) met terugkoppeling huisarts; afstemming met diëtist en fysiotherapeut; integratie met diabetes/CNI-bundels.",
-      monitoring: "Onbehandelde zeer hoge bloeddruk, therapieresistentie, nieuwe angina/TIA → huisarts/cardioloog; acute pijn op de borst → 112.",
-      zorgverleners: "Huisarts, POH (CVRM), diëtist, fysiotherapeut, apotheker, psycholoog (stress)."
-          bronnen: [
-      {naam: "ESC Guidelines on Cardiovascular Disease Prevention", type: "richtlijn", jaar: 2024, boodschap: "SCORE2 risicoschatting, leefstijl + medicamenteuze interventies"},
-      {naam: "NHG-Standaard Cardiovasculair risicomanagement", type: "richtlijn", jaar: 2023, boodschap: "Geïntegreerde CVRM-aanpak in de eerste lijn met POH-ondersteuning"},
-      {naam: "WHO Global Hearts Initiative", type: "framework", jaar: 2023, boodschap: "Wereldwijde strategie voor preventie hart- en vaatziekten via leefstijl en medicatie"},
-      {naam: "Hartstichting – CVRM-zorg na ontslag", type: "advies", jaar: 2023, boodschap: "Nazorgtraject met leefstijlcoaching, monitoring risicofactoren"},
-      {naam: "Cochrane: Lifestyle interventions for CVD prevention", type: "review", jaar: 2023, boodschap: "Dieet, beweging, rookstop verminderen cardiovasculaire events significant"},
-      {naam: "AHA/ACC Cholesterol guidelines", type: "richtlijn", jaar: 2023, boodschap: "Statines, PCSK9-remmers, leefstijl voor LDL-reductie"}
-    ]
-    },
-    {
-      nr: 4,
-      naam: "Cardio-vasculaire instabiliteit / collapsrisico – Veiligheids- & monitoringbundel",
-      medischLexicon: [
-        "atriumfibrilleren", "AF", "hartritmestoornis", "tachycardie",
-        "bradycardie", "syncope", "presyncope", "collaps",
-        "onwel geworden", "hypotensie", "orthostatische hypotensie",
-        "ECG-afwijkingen", "pacemaker", "ICD", "plotse bewustzijnsverlies"
-      ],
-      patientLexicon: [
-        "Ik word soms plots duizelig",
-        "Mijn hart slaat raar/overslagen",
-        "Ik ben al eens flauwgevallen",
-        "Ik voel me ineens helemaal slap",
-        "Ik durf niet goed alleen te zijn door mijn hart"
-      ],
-      klinisch: "Bloeddruk (ook orthostatisch), pols/ritme, syncope-episodes, valincidenten.",
-      educatie: "Herkenning pijn op de borst, ernstige dyspnoe, syncope; veilig opstaan en omgaan met medicatie.",
-      functioneel: "Mobiliteitshulpmiddelen, veilige trap/badkamer, verlichting, personenalarm.",
-      coordinatie: "Afstemming huisarts–cardioloog–thuisverpleging; rapporteren incidenten via nurseline.",
-      monitoring: "Syncope/collaps, ernstige hypotensie, ritmestoornis, val met letsel → huisarts/specialist; pijn op de borst of ernstige dyspnoe → 112.",
-      zorgverleners: "Huisarts, cardioloog, thuisverpleging, kinesitherapeut, ergotherapeut, alarmcentrale."
-          bronnen: [
-      {naam: "ESC Guidelines on Atrial Fibrillation", type: "richtlijn", jaar: 2024, boodschap: "Ritmebeheer, anticoagulatie, geïntegreerde zorg voor AF-patiënten"},
-      {naam: "NHG-Standaard Atriumfibrilleren", type: "richtlijn", jaar: 2023, boodschap: "Detectie, risicostratificatie, DOAC-therapie in de eerste lijn"},
-      {naam: "ESC Guidelines on Syncope", type: "richtlijn", jaar: 2022, boodschap: "Diagnostiek, risicostratificatie, preventie recidief syncope"},
-      {naam: "NICE Atrial fibrillation management", type: "richtlijn", jaar: 2023, boodschap: "Stroke-preventie, rate/rhythm control, shared decision making"},
-      {naam: "Hartstichting – Leven met hartfalen en ritmestoornissen", type: "advies", jaar: 2023, boodschap: "Zelfmonitoring, alarmtekenen, medicatietrouw, leefstijl"},
-      {naam: "Cochrane: Anticoagulation for AF", type: "review", jaar: 2023, boodschap: "DOAC's reduceren stroke-risico bij AF met acceptabel bloedingsrisico"}
-    ]
-    },
-    {
-      nr: 5,
-      naam: "Chronische respiratoire kwetsbaarheid (COPD/astma) – Chronische respiratoire zorgbundel",
-      medischLexicon: [
-        "COPD", "chronische bronchitis", "emfyseem", "GOLD",
-        "astma", "exacerbaties", "longaanval", "dyspnoe",
-        "kortademigheid", "inspanningsdyspnoe", "luchtwegobstructie",
-        "inhalatietherapie", "puffer", "zuurstoftherapie", "thuiszuurstof"
-      ],
-      patientLexicon: [
-        "Ik ben snel buiten adem",
-        "Ik durf me niet meer in te spannen",
-        "Ik krijg vaak een longontsteking",
-        "Mijn puffers helpen niet altijd",
-        "Ik ben bang om geen lucht meer te krijgen"
-      ],
-      klinisch: "Ademfrequentie, dyspnoe-score, saturatie, hoest/sputum, exacerbaties.",
-      educatie: "Persoonlijk astma/COPD-actieplan, vroege exacerbatiesignalen, rescue-medicatie, correcte inhalatietechniek, rookstop.",
-      functioneel: "Beweegprogramma, energiemanagement, hulpmiddelen (douchestoel, rollator), woonventilatie.",
-      coordinatie: "Afstemming huisarts–POH/longverpleegkundige–longarts; koppeling longrevalidatie; vaccinatieplanning.",
-      monitoring: "Ernstige dyspnoe, cyanose, verwardheid, RR >30, bloed ophoesten → 112; toenemende benauwdheid ondanks medicatie → huisarts.",
-      zorgverleners: "Huisarts, POH/longverpleegkundige, longarts, fysiotherapeut, diëtist, apotheker, rookstopcoach."
-    },
-    {
-      nr: 6,
-      naam: "Metabool-renale kwetsbaarheid (CNI, HF, multimorbiditeit) – Chronische zorgbundel",
-            bronnen: [
-      {naam: "GOLD Strategy COPD 2024", type: "richtlijn", jaar: 2024, boodschap: "Classificatie, inhalatietechniek, exacerbatiemanagement, geïntegreerde zorg"},
-      {naam: "GINA Asthma guidelines", type: "richtlijn", jaar: 2024, boodschap: "Controle-gebaseerde behandeling, stepwise approach, zelfmanagement"},
-      {naam: "NHG-Standaard COPD", type: "richtlijn", jaar: 2023, boodschap: "Diagnostiek, behandeling en begeleiding COPD in de huisartsenpraktijk"},
-      {naam: "NHG-Standaard Astma", type: "richtlijn", jaar: 2023, boodschap: "Evidence-based astmamanagement, longfunctiebeoordeling, inhalatie-instructie"},
-      {naam: "Longfonds – Leven met COPD/astma", type: "advies", jaar: 2023, boodschap: "Patiënteneducatie, rookstop, pulmonale revalidatie, thuiszuurstof"},
-      {naam: "Cochrane: Pulmonary rehabilitation for COPD", type: "review", jaar: 2022, boodschap: "Significant verbetert kwaliteit van leven, inspanningsvermogen, dyspnoe"}
-    ]
-      medischLexicon: [
-        "chronische nierinsufficiëntie", "CNI", "eGFR verlaagd", "nierfunctiestoornis",
-        "nierschade", "diuretica", "lisdiureticum", "hartfalen",
-        "decompensatio cordis", "vochtretentie", "oedeem",
-        "elektrolytenstoornissen", "hyperkaliëmie", "hyponatriëmie", "multimorbiditeit"
-      ],
-      patientLexicon: [
-        "Ik hou veel vocht vast",
-        "Mijn benen of enkels staan dik",
-        "Ik ben snel moe, weinig reserve",
-        "Mijn nieren werken niet goed, zeggen ze",
-        "Ik mag niet veel drinken van de dokter",
-        "Mijn medicijnen worden vaak aangepast"
-      ],
-      klinisch: "eGFR, albuminurie, elektrolyten, bloeddruk, gewicht (HF dagelijks), oedeem, dyspnoe.",
-      educatie: "Vocht- en zoutbeperking, tekenen decompensatie, nut nier- en hartbeschermende medicatie.",
-      functioneel: "Weegschaal, maatbeker, aangepast dieet (plantaardig, eiwit/fosfaatbeperking) met praktische ondersteuning.",
-      coordinatie: "Gezamenlijk plan huisarts–nefroloog–cardioloog–diëtist–nurseline; medicatiereview met apotheker.",
-      monitoring: "HF: +2 kg in 3 dagen, ernstige dyspnoe → huisarts/112; CNI: snelle eGFR-daling, ernstige elektrolytenstoornis → nefroloog.",
-      zorgverleners: "Huisarts, nefroloog, cardioloog, POH, diëtist (nier), apotheker, thuisverpleging."
-          bronnen: [
-      {naam: "KDIGO Guidelines Chronic Kidney Disease", type: "richtlijn", jaar: 2024, boodschap: "Evidence-based management CNI, eGFR-monitoring, cardiovasculaire bescherming"},
-      {naam: "ESC Heart Failure Guidelines", type: "richtlijn", jaar: 2023, boodschap: "Diagnostiek, medicatie, zelfmanagement, multidisciplinaire aanpak HF"},
-      {naam: "NHG-Standaard Chronische nierschade", type: "richtlijn", jaar: 2023, boodschap: "Vroegdetectie, behandeling, verwijscriteria CNI in de eerste lijn"},
-      {naam: "NHG-Standaard Hartfalen", type: "richtlijn", jaar: 2024, boodschap: "Diagnostiek, behandeling en monitoring hartfalen in de huisartspraktijk"},
-      {naam: "Nierstichting – Leven met CNI", type: "advies", jaar: 2023, boodschap: "Patiënteneducatie, dieet, zoutbeperking, nierbeschermende medicatie"},
-      {naam: "Hartstichting – Leven met hartfalen", type: "advies", jaar: 2023, boodschap: "Zelfmanagement, dagelijks wegen, vochtbeperking, signaalherkenning"}
-    ]
-    },
-    {
-      nr: 7,
-      naam: "Functionele achteruitgang & valrisico – Functionele ondersteuningsbundel",
-      medischLexicon: [
-        "mobiliteitsbeperking", "loopstoornis", "gangstoornis", "valincident",
-        "herhaald vallen", "frailty", "kwetsbare oudere", "ADL-hulp nodig",
-        "hulpmiddelen bij mobiliteit", "spierzwakte", "sarcopenie",
-        "transferproblemen", "instabiel stappen", "recent functioneel verval", "valneiging"
-      ],
-      patientLexicon: [
-        "Ik ben al een paar keer gevallen",
-        "Ik stap niet meer zeker",
-        "Opstaan gaat moeilijk",
-        "Ik durf niet meer naar buiten",
-        "Ik voel me zwakker dan vroeger",
-        "Ik heb schrik om te vallen"
-      ],
-      klinisch: "Mobiliteit (TUG), ADL/iADL, spierkracht, valincidenten, visus.",
-      educatie: "Valrisico, veilig bewegen, gebruik hulpmiddelen, omgaan met valangst.",
-      functioneel: "Kracht- en balansoefenprogramma, woningaanpassingen, hulpmiddelen (rollator, beugels, schoeisel, nachtlicht).",
-      coordinatie: "Multidisciplinair zorgplan (huisarts, kine, ergo, diëtist, thuiszorg); betrokkenheid mantelzorg.",
-      monitoring: "≥2 vallen/jaar, ernstige valangst, snel ADL-verlies → huisarts/kine/ergo; ernstige val met letsel → 112/SEH.",
-      zorgverleners: "Huisarts, kinesitherapeut, ergotherapeut, diëtist, thuisverpleging, maatschappelijk werker."
-    },
-    {
-      nr: 8,
-      naam: "Ondervoeding & verminderde voedselinname – Voeding & herstelbundel",
-      medischLexicon: [
-        "ondervoeding", "risico op ondervoeding", "malnutritie", "gewichtsverlies",
-        "verminderde intake", "slechte eetlust", "anorexie", "cachexie",
-        "laag BMI", "sarcopenie", "slikproblemen", "dysfagie",
-        "voedingstekort", "sondevoeding", "dieet bij gewichtsverlies"
-      ],
-      patientLexicon: [
-        "Ik heb geen eetlust",
-        "Ik sla maaltijden over",
-        "Eten lukt niet goed meer",
-        "Ik ben veel vermagerd",
-        "Alleen eten vind ik lastig",
-        "Ik heb vaak geen zin om te koken"
-      ],
-      klinisch: "Gewicht, MUST/SNAQ65+, eetlust, intake, kauw-/slikproblemen.",
-      educatie: "Belang eiwit/energie, kleine frequente maaltijden, verrijking, herkennen ondervoeding.",
-      functioneel: "Maaltijdservice, hulp bij boodschappen/koken, drinkvoeding, aangepaste consistentie voeding.",
-      coordinatie: "Diëtist als spil, afstemming met huisarts/nurseline; koppeling met ouderen-/valbundel.",
-      monitoring: ">5 kg verlies in 3 maanden, <50% inname, slikproblemen → huisarts + diëtist/logopedist; ernstige dehydratie → 112/huisarts.",
-      zorgverleners: "Diëtist, huisarts, thuisverpleging, logopedist, maatschappelijk werker, maaltijdservice."
-    },
-    {
-      nr: 9,
-      naam: "Cognitieve kwetsbaarheid – Cognitieve ondersteuningsbundel",
-      medischLexicon: [
-        "dementieel beeld", "dementie", "ziekte van Alzheimer", "cognitieve stoornissen",
-        "geheugenstoornissen", "MCI", "milde cognitieve stoornis", "delirium",
-        "acute verwardheid", "desoriëntatie", "executieve functiestoornissen",
-        "MMSE verlaagd", "kloktest afwijkend", "cognitieve achteruitgang", "vergeetachtigheid"
-      ],
-      patientLexicon: [
-        "Ik vergeet veel de laatste tijd",
-        "Alles wordt te ingewikkeld voor mij",
-        "Ik raak soms de kluts kwijt",
-        "Ik weet niet meer of ik mijn pillen genomen heb",
-        "Hij/zij is niet meer zoals vroeger in zijn/haar hoofd",
-        "Hij/zij raakt snel in de war"
-      ],
-      klinisch: "Oriëntatie, geheugen, uitvoerende functies, ADL-zelfstandigheid, medicatiebeheer.",
-      educatie: "Uitleg over geheugenproblemen, structuur/compensaties, veilig gedrag, medicatieondersteuning.",
-      functioneel: "Dag-/weekschema’s, herinneringshulpmiddelen, toezicht bij medicatie en ADL, extra aanwezigheid bij alleenwonenden.",
-      coordinatie: "Huisarts + evt. geriater/psycholoog; casemanagement via nurseline/thuiszorg; afstemming met mantelzorg.",
-      monitoring: "Acuut delier, wegloopgedrag, ernstige verwaarlozing of onveiligheid → huisarts/spoed; progressieve achteruitgang → huisarts/geriater.",
-      zorgverleners: "Huisarts, geriater, thuisverpleging, casemanager/dementiecoach, ergotherapeut, maatschappelijk werker."
-    },
-    {
-      nr: 10,
-      naam: "Psychosociaal lijden & eenzaamheid – Mentaal-welzijnsbundel",
-      medischLexicon: [
-        "depressieve klachten", "depressie", "somberheid", "angst",
-        "angststoornis", "rouw", "psychosociale problematiek",
-        "aanpassingsstoornis", "suïcidale gedachten", "burn-out",
-        "stressklachten", "slaapproblemen", "insomnia", "eenzaamheid",
-        "sociaal isolement"
-      ],
-      patientLexicon: [
-        "Ik voel me alleen",
-        "Het is me allemaal te veel",
-        "Ik slaap slecht",
-        "Ik heb nergens zin in",
-        "Ik zie het niet meer zitten",
-        "Ik heb niemand om mee te praten"
-      ],
-      klinisch: "Depressie-/angstscreening, suïcidaliteit, slaap, sociaal functioneren.",
-      educatie: "Psycho-educatie over depressie/angst, coping, normaliseren, info over eerstelijnspsychologie/zelfhulp.",
-      functioneel: "Toeleiding naar sociale activiteiten, lotgenotengroepen, vrijwilligersbezoek; drempels verlagen (vervoer, kosten).",
-      coordinatie: "Afstemming huisarts–POH-GGZ–eerstelijnspsycholoog–maatschappelijk werker; koppeling met mantelzorg-/ouderenbundel.",
-      monitoring: "Suïcidegedachten, ernstige depressie/angst, verwaarlozing → huisarts/GGZ-crisis; acuut gevaar → 112.",
-      zorgverleners: "Huisarts, POH-GGZ, eerstelijnspsycholoog, maatschappelijk werker, welzijnsorganisaties, crisisteam."
-    },
-    {
-      nr: 11,
-      naam: "Mantelzorger-overbelasting – Mantelzorg-ondersteuningsbundel",
-      medischLexicon: [
-        "mantelzorger overbelast", "mantelzorgbelasting", "caregiver burden",
-        "beperkte sociale ondersteuning", "intensieve mantelzorg",
-        "complexe zorgsituatie", "nachtelijke zorg thuis",
-        "alleenstaande mantelzorger", "overbelasting gezin",
-        "vraag naar opname", "nood aan respijtzorg", "uitputting mantelzorger"
-      ],
-      patientLexicon: [
-        "Ik kan dit niet meer alleen",
-        "Het wordt mij te zwaar",
-        "Ik ben altijd moe van de zorg",
-        "Ik weet niet hoe lang ik dit nog volhoud",
-        "Er is niemand anders die kan helpen",
-        "Ik kom niet meer aan mezelf toe"
-      ],
-      klinisch: "Belasting, draagkracht, eigen gezondheid mantelzorger, uren zorg per week.",
-      educatie: "Voorlichting over risico’s van overbelasting, grenzen stellen, beschikbare ondersteuning en respijtzorg.",
-      functioneel: "Respijtzorg (dag-/nachtopvang, logeerzorg), extra thuiszorg, hulpmiddelen om fysieke last te verminderen, praktische hulp.",
-      coordinatie: "Huisarts, thuiszorg en mantelzorgsteunpunt stemmen zorg af; mantelzorger expliciet in zorgplan.",
-      monitoring: "Ernstige uitputting, agressie, verwaarlozing/mishandeling → huisarts/maatschappelijk werker; acuut gevaar → 112/politie.",
-      zorgverleners: "Huisarts, thuisverpleging, mantelzorgsteunpunt, maatschappelijk werker, psycholoog."
-    },
-    {
-      nr: 12,
-      naam: "Veiligheid & angst om alleen te zijn – Veiligheids- & alarmbundel",
-      medischLexicon: [
-        "valrisico", "verhoogd valrisico", "valangst", "alleenwonend",
-        "woont alleen", "onveiligheidsgevoel", "angst om alleen te zijn",
-        "nachtelijke onrust", "cognitieve kwetsbaarheid", "val in voorgeschiedenis",
-        "valincident", "angststoornis", "personenalarm", "valdetectie",
-        "hulpverlening 's nachts"
-      ],
-      patientLexicon: [
-        "Ik ben bang dat ik val",
-        "Wat als er iets gebeurt en ik alleen ben?",
-        "Ik durf niet meer alleen te zijn",
-        "’s Nachts voel ik me onveilig",
-        "Ik geraak niet op tijd aan de telefoon of bel"
-      ],
-      klinisch: "Valrisico, nachtelijke onrust, feitelijk gebruik alarm/telefoon, angstniveau.",
-      educatie: "Uitleg werking alarm, noodnummers, stappenplan bij incident; psycho-educatie rond angst.",
-      functioneel: "Personenalarm/valdetectie, verbeterde verlichting, verwijderen valrisico’s, evt. nachtzorg/burencirkel.",
-      coordinatie: "Afstemming huisarts–alarmcentrale–thuiszorg–mantelzorg; koppeling met val- en cognitieve bundel.",
-      monitoring: "Herhaalde vallen, paniekaanvallen, niet bellen bij incidenten → huisarts/ergotherapeut/GGZ; ernstig letsel → 112.",
-      zorgverleners: "Thuisverpleging, ergotherapeut, huisarts, alarmcentrale, maatschappelijk werker, GGZ."
-    },
-    {
-      nr: 13,
-      naam: "Palliatieve zorgnoden – Palliatieve thuiszorgbundel",
-      medischLexicon: [
-        "palliatief", "palliatieve fase", "levenseinde", "terminaal",
-        "comfortzorg", "symptoomcontrole", "refractaire symptomen",
-        "advance care planning", "wilsverklaring", "DNR",
-        "niet-reanimeren", "geen curatieve opties meer",
-        "beperkte levensverwachting", "palliatieve thuiszorg", "herhaalde opnames"
-      ],
-      patientLexicon: [
-        "Ik wil vooral comfort nu",
-        "Ik wil niet meer naar het ziekenhuis",
-        "De pijn is moeilijk te dragen",
-        "Ik ben moe van alles",
-        "Wat als het slechter gaat, wat dan?",
-        "Ik wil mijn laatste tijd thuis doorbrengen"
-      ],
-      klinisch: "Symptomen (pijn, dyspnoe, misselijkheid, angst, delier), functionele status, comfort.",
-      educatie: "Ziekteverloop, symptoomcontrole, basis + rescue-medicatie, wat te doen bij verslechtering, informatie over terminale fase.",
-      functioneel: "Zorgbed, ADL-hulp, hulpmiddelen (rolstoel, tillift), nacht-/vrijwilligerszorg, ondersteuning huishouden.",
-      coordinatie: "Advance care planning; nauwe samenwerking huisarts–palliatief team–thuisverpleging–apotheker; gedeeld zorgplan.",
-      monitoring: "Onvoldoende symptoomcontrole, refractaire onrust, acute respiratoire nood → huisarts/palliatief team; acute levensbedreiging → 112 volgens beleid.",
-      zorgverleners: "Huisarts, palliatief team, thuisverpleging, apotheker, diëtist, psycholoog, geestelijk verzorger, maatschappelijk werker."
-    },
-    {
-      nr: 14,
-      naam: "Incontinentie & delirium-risico – Incontinentie- & helderheidsbundel",
-      medischLexicon: [
-        "urine-incontinentie", "fecale incontinentie", "mictieproblemen",
-        "urgency", "nycturie", "nachtelijk urineverlies", "delirium",
-        "acute cognitieve verandering", "CAM-positief", "nachtelijke onrust",
-        "verhoogd valrisico", "continentiezorg", "katheter", "urineretentie"
-      ],
-      patientLexicon: [
-        "Ik geraak niet op tijd op het toilet",
-        "Ik heb soms ongelukjes",
-        "’s Nachts is het lastig met naar het toilet gaan",
-        "Hij is ’s avonds plots zo verward",
-        "Ze is ’s nachts helemaal zichzelf niet"
-      ],
-      klinisch: "Mictiepatroon, nachtelijke toiletgang, episodes delier/nachtelijke onrust, valincidenten.",
-      educatie: "Gebruik incontinentiemateriaal, toiletgedrag, drinken, vroege deliersignalen voor mantelzorgers.",
-      functioneel: "Passend incontinentiemateriaal, toiletverhogers, beugels, nachtverlichting, korte looplijnen.",
-      coordinatie: "Afstemming huisarts–continentieverpleegkundige–thuisverpleging–kinesitherapeut; integratie met valpreventie.",
-      monitoring: "Acute verwardheid, urineretentie, UWI met delier, val door nachtelijke toiletgang → huisarts/spoed; ernstig delier + gevaar → 112.",
-      zorgverleners: "Huisarts, thuisverpleging, continentieverpleegkundige, kinesitherapeut, ergotherapeut."
-    },
-    {
-      nr: 15,
-      naam: "Ernstige zintuiglijke beperkingen (zien/horen) – Communicatie- & veiligheidsbundel",
-      medischLexicon: [
-        "visusstoornis", "slechtziend", "blind", "maculadegeneratie",
-        "glaucoom", "cataract", "gehoorverlies", "slechthorend",
-        "doof", "hoortoestel", "communicatieproblemen",
-        "begrijpt uitleg moeilijk", "zintuiglijke beperking",
-        "auditieve beperking", "visuele beperking"
-      ],
-      patientLexicon: [
-        "Ik hoor niet goed meer",
-        "Ik zie dat niet goed/meer",
-        "Ik versta de dokter vaak niet",
-        "Ik heb moeite om de brieven of etiketten te lezen",
-        "Ik begrijp de uitleg niet goed"
-      ],
-      klinisch: "Functioneren met bril/hoortoestel, impact op ADL/veiligheid, miscommunicatie-incidenten.",
-      educatie: "Belang hulpmiddelen, onderhoud, aangepaste communicatie (tempo, volume, grote letters).",
-      functioneel: "(Her)aanpassing bril/hoortoestel, grootlettermateriaal, aangepaste telefoon, betere verlichting/contrasten.",
-      coordinatie: "Afstemming huisarts–oogarts–audioloog–thuiszorg; zintuiglijke beperking meenemen in andere bundels.",
-      monitoring: "Plots visus-/gehoorverlies, onveilige situaties door gemiste info → oogarts/audioloog/huisarts; acuut gevaar (bijv. verkeer) → 112.",
-      zorgverleners: "Huisarts, oogarts, audioloog, thuisverpleging, ergotherapeut, maatschappelijk werker."
-    },
-    {
-      nr: 16,
-      naam: "Verslaving / psychosociaal ontwrichtend gedrag – Verslavings- & veiligheidsbundel",
-      medischLexicon: [
-        "alcoholmisbruik", "alcoholafhankelijkheid", "middelengebruik",
-        "druggebruik", "intoxicatie", "verslavingsproblematiek",
-        "therapie-ontrouw", "non-compliance", "agressief gedrag",
-        "agitatie", "huiselijk geweld", "conflictueuze thuissituatie",
-        "psychiatrische voorgeschiedenis", "dubbeldiagnose", "onveilige thuissituatie"
-      ],
-      patientLexicon: [
-        "Hij drinkt te veel",
-        "Hij/zij is vaak zat of onder invloed",
-        "Het escaleert hier soms thuis",
-        "We durven hem/haar niet alleen laten",
-        "Er is vaak ruzie om het drinken of de drugs"
-      ],
-      klinisch: "Gebruikspatroon, intoxicaties, onthouding, psychiatrische symptomen, veiligheid gezin.",
-      educatie: "Motiverende gespreksvoering, risico’s gebruik, behandelopties, grenzen/veiligheid voor mantelzorg.",
-      functioneel: "Steun bij dagstructuur, financiën, huisvesting; praktische steun voor gezin/kinderen.",
-      coordinatie: "Strakke zorgcoördinatie huisarts–CGG/verslavingszorg–maatschappelijk werk–eventueel politie/justitie; duidelijke crisisroutes.",
-      monitoring: "Agressie, suïcidaliteit, ernstige intoxicatie, huiselijk geweld → spoed/politie/psychiatrische crisisdienst; toenemend gebruik/ontregeling → huisarts/CGG.",
-      zorgverleners: "Huisarts, CGG/verslavingszorg, maatschappelijk werker, thuisverpleging, politie/justitie, GGZ-crisisdienst."
-    }
-  ];
+      <div class="data-section" id="patientlexicon-section">
+        <h2>👥 Patiënten-lexicon</h2>
+        <div class="data-grid" id="patientLexiconDisplay"></div>
+      </div>
 
-  // =========================
-  // DOM
-  // =========================
-  const tbody = document.querySelector("#zorgbundelsTable tbody");
-  const searchInput = document.getElementById("searchInput");
-  const scopeSelect = document.getElementById("scopeSelect");
-  const clearBtn = document.getElementById("clearBtn");
-  const showAllBtn = document.getElementById("showAllBtn");
-  const resultCount = document.getElementById("resultCount");
+      <div class="data-section" id="zorgverleners-section">
+        <h2>🥼 Zorg- en/of dienstverleners</h2>
+        <div class="data-grid" id="zorgverlenersDisplay"></div>
+      </div>
 
-  // =========================
-  // Helpers
-  // =========================
-  const esc = (s) =>
-    String(s ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+      <div class="data-section" id="bronnen-section">
+        <h2>📊 Wetenschappelijke bronnen</h2>
+        <div class="data-grid" id="bronnenDisplay"></div>
+      </div>
+    </section>
+  </main>
 
-  function normalize(str){
-    return String(str || "")
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, ""); // accent-insensitive
-  }
-
-  // Tokens met quotes:  diabetes hypo  |  "hoge bloeddruk"
-  function tokenize(query){
-    const q = query.trim();
-    if(!q) return [];
-    const tokens = [];
-    const re = /"([^"]+)"|(\S+)/g;
-    let m;
-    while((m = re.exec(q)) !== null){
-      tokens.push(normalize(m[1] || m[2]));
-    }
-    return tokens.filter(Boolean);
-  }
-
-  function haystacks(zb){
-    const naam = normalize(zb.naam);
-    const med = normalize(zb.medischLexicon.join(" "));
-    const pat = normalize(zb.patientLexicon.join(" "));
-    const all = normalize([
-      zb.naam,
-      zb.medischLexicon.join(" "),
-      zb.patientLexicon.join(" "),
-      zb.klinisch,
-      zb.educatie,
-      zb.functioneel,
-      zb.coordinatie,
-      zb.monitoring,
-      zb.zorgverleners
-    ].join(" "));
-    return { naam, med, pat, all };
-  }
-
-  function matchesAllTokens(haystack, tokens){
-    return tokens.every(t => haystack.includes(t));
-  }
-
-  function renderBadges(list, type){
-    return list.map(term => `
-      <button
-        type="button"
-        class="badge-btn"
-        data-type="${type}"
-        data-term="${esc(term)}"
-        title="Klik om hierop te zoeken"
-      >${esc(term)}</button>
-    `).join(" ");
-  }
-
-  // =========================
-  // Render
-  // =========================
-  function render(){
-    const query = searchInput.value;
-    const tokens = tokenize(query);
-    const scope = scopeSelect.value; // all | naam | medisch | patient
-
-    tbody.innerHTML = "";
-    let count = 0;
-
-    for(const zb of zorgbundels){
-      const hs = haystacks(zb);
-
-      let searchable = hs.all;
-      if(scope === "naam") searchable = hs.naam;
-      if(scope === "medisch") searchable = hs.naam + " " + hs.med;
-      if(scope === "patient") searchable = hs.naam + " " + hs.pat;
-
-      const ok = tokens.length === 0 ? true : matchesAllTokens(searchable, tokens);
-      if(!ok) continue;
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${esc(zb.nr)}</td>
-        <td>${esc(zb.naam)}</td>
-        <td>${renderBadges(zb.medischLexicon, "medisch")}</td>
-        <td>${renderBadges(zb.patientLexicon, "patient")}</td>
-        <td class="small">${esc(zb.klinisch)}</td>
-        <td class="small">${esc(zb.educatie)}</td>
-        <td class="small">${esc(zb.functioneel)}</td>
-        <td class="small">${esc(zb.coordinatie)}</td>
-        <td class="small">${esc(zb.monitoring)}</td>
-        <td class="small">${esc(zb.zorgverleners)}</td>
-      `;
-      tbody.appendChild(tr);
-      count++;
-    }
-
-    resultCount.textContent = String(count);
-  }
-
-  function setSearch(term, scope){
-    searchInput.value = term || "";
-    if(scope) scopeSelect.value = scope;
-    render();
-    searchInput.focus();
-  }
-
-  // =========================
-  // Events
-  // =========================
-  searchInput.addEventListener("input", render);
-// scopeSelect.addEventListener("change", render);
-// clearBtn.addEventListener("click", () => setSearch("", "all"));
-  // showAllBtn.addEventListener("click", () => setSearch("", scopeSelect.value));
-  searchInput.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") render();
-    if(e.key === "Escape") setSearch("", "all");
-  });
-
-  // Badge click = direct zoeken binnen juiste scope
-  tbody.addEventListener("click", (e) => {
-    const btn = e.target.closest(".badge-btn");
-    if(!btn) return;
-    const term = btn.getAttribute("data-term") || "";
-    const type = btn.getAttribute("data-type") || "all";
-    setSearch(term, type === "medisch" ? "medisch" : "patient");
-  });
-
-  // Initial render
-  render();
-      displayAllData();
-
-</script>
-  // =========================
-    // Display Data Sections
+  <script>
     // =========================
+    // DATA (belangrijk: fix syntax: kommas + correcte velden)
+    // =========================
+    const zorgbundels = [
+      {
+        nr: 1,
+        naam: "Diabetes met verhoogd thuisrisico – Diabetes- & medicatie-opvolgbundel",
+        medischLexicon: [
+          "diabetes mellitus","DM2","insulinedependent","insulinetherapie",
+          "orale antidiabetica","hypoglycemie","hyperglycemie","labiele glycemie",
+          "ontregelde glycemie","verhoogd HbA1c","diabetische neuropathie",
+          "diabetische nefropathie","diabetische voet","glucosecontrole","suikerziekte"
+        ],
+        patientLexicon: [
+          "Ik heb suikerziekte","Mijn suiker schommelt","Mijn suiker is vaak te hoog",
+          "Mijn suiker is vaak te laag","Ik ben bang voor een hypo",
+          "Ik vergeet soms mijn suiker te meten","Ik snap mijn insuline niet goed",
+          "Ik snap mijn medicatie niet goed","Ik moet veel plassen ’s nachts",
+          "Ik ben vaak moe en draaierig"
+        ],
+        klinisch: "Glycemies (nuchter/postprandiaal), symptomen hypo/hyper, voetstatus, gewicht, algemene conditie.",
+        educatie: "Hypo-/hyperherkenning + actieplan, correcte glucosemeting, medicatieschema, dagelijkse voetinspectie.",
+        functioneel: "Glucosemeter, strips, weekdoos, duidelijke schema’s, hulp bij voeding en maaltijden.",
+        coordinatie: "Afstemming huisarts–POH/diabetesverpleegkundige–diëtist–thuisverpleging over streefwaarden en aanpassingen.",
+        monitoring: "Herhaalde hypo’s, glycemie >20 mmol/L, koorts + hoge glycemie, voetulcus of infectie → huisarts/wachtdienst; levensbedreigend → 112.",
+        zorgverleners: "Huisarts, POH/diabetesverpleegkundige, thuisverpleging, diëtist, podotherapeut/pedicure, apotheker.",
+        bronnen: [
+          {naam:"NHG-Standaard Diabetes mellitus type 2", type:"richtlijn", jaar:2024, boodschap:"Gestructureerde controles met HbA1c-streefwaarde, preventie complicaties, zelfmanagement"}
+        ]
+      },
+      {
+        nr: 2,
+        naam: "Polyfarmacie & medicatieveiligheid – Medicatieveiligheidsbundel",
+        medischLexicon: ["polyfarmacie","multimedicatie","≥5 medicaties","medicatielijst","STOPP/START","hoogrisico-medicatie"],
+        patientLexicon: ["Ik neem heel veel pillen","Ik weet niet meer waarvoor alles is","Mijn medicijnen zijn veranderd"],
+        klinisch: "Bijwerkingen, therapietrouw, aantal medicaties.",
+        educatie: "Uitleg nieuw schema, gevaar dubbelgebruik/zelf stoppen.",
+        functioneel: "Weekdoos, visueel schema, alarmen of medicatierol.",
+        coordinatie: "Medicatiereview huisarts–huisapotheker; afstemming voorschrijvers.",
+        monitoring: "Ernstige bijwerkingen → huisarts; acute intoxicatie → 112.",
+        zorgverleners: "Huisarts, huisapotheker, thuisverpleging.",
+        bronnen: []
+      }
+      // ... plak hier je overige bundels (zelfde structuur) ...
+    ];
 
-    function displayAllData() {
-      // Display Zorgbundels
-      const zorgbundelsDiv = document.getElementById('zorgbundelsDisplay');
+    // =========================
+    // DOM
+    // =========================
+    const tbody = document.querySelector("#zorgbundelsTable tbody");
+    const searchInput = document.getElementById("searchInput");
+    const scopeSelect = document.getElementById("scopeSelect");
+    const clearBtn = document.getElementById("clearBtn");
+    const showAllBtn = document.getElementById("showAllBtn");
+    const resultCount = document.getElementById("resultCount");
+    const statBundels = document.getElementById("statBundels");
+
+    // =========================
+    // Helpers
+    // =========================
+    const esc = (s) =>
+      String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+    function normalize(str){
+      return String(str || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"");
+    }
+
+    // Tokens met quotes
+    function tokenize(query){
+      const q = query.trim();
+      if(!q) return [];
+      const tokens = [];
+      const re = /"([^"]+)"|(\S+)/g;
+      let m;
+      while((m = re.exec(q)) !== null){
+        tokens.push(normalize(m[1] || m[2]));
+      }
+      return tokens.filter(Boolean);
+    }
+
+    function haystacks(zb){
+      const naam = normalize(zb.naam);
+      const med = normalize((zb.medischLexicon || []).join(" "));
+      const pat = normalize((zb.patientLexicon || []).join(" "));
+      const all = normalize([
+        zb.naam,
+        (zb.medischLexicon || []).join(" "),
+        (zb.patientLexicon || []).join(" "),
+        zb.klinisch, zb.educatie, zb.functioneel, zb.coordinatie, zb.monitoring, zb.zorgverleners
+      ].join(" "));
+      return { naam, med, pat, all };
+    }
+
+    function matchesAllTokens(haystack, tokens){
+      return tokens.every(t => haystack.includes(t));
+    }
+
+    function renderBadges(list, type){
+      return (list || []).map(term => `
+        <button
+          type="button"
+          class="badge-btn"
+          data-type="${type}"
+          data-term="${esc(term)}"
+          title="Klik om hierop te zoeken"
+        >${esc(term)}</button>
+      `).join(" ");
+    }
+
+    // =========================
+    // Render table
+    // =========================
+    function render(){
+      const tokens = tokenize(searchInput.value);
+      const scope = scopeSelect.value; // all | naam | medisch | patient
+
+      tbody.innerHTML = "";
+      let count = 0;
+
+      for(const zb of zorgbundels){
+        const hs = haystacks(zb);
+
+        let searchable = hs.all;
+        if(scope === "naam") searchable = hs.naam;
+        if(scope === "medisch") searchable = hs.naam + " " + hs.med;
+        if(scope === "patient") searchable = hs.naam + " " + hs.pat;
+
+        const ok = tokens.length === 0 ? true : matchesAllTokens(searchable, tokens);
+        if(!ok) continue;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${esc(zb.nr)}</td>
+          <td>${esc(zb.naam)}</td>
+          <td>${renderBadges(zb.medischLexicon, "medisch")}</td>
+          <td>${renderBadges(zb.patientLexicon, "patient")}</td>
+          <td class="small">${esc(zb.klinisch)}</td>
+          <td class="small">${esc(zb.educatie)}</td>
+          <td class="small">${esc(zb.functioneel)}</td>
+          <td class="small">${esc(zb.coordinatie)}</td>
+          <td class="small">${esc(zb.monitoring)}</td>
+          <td class="small">${esc(zb.zorgverleners)}</td>
+        `;
+        tbody.appendChild(tr);
+        count++;
+      }
+
+      resultCount.textContent = String(count);
+    }
+
+    function setSearch(term, scope){
+      searchInput.value = term || "";
+      if(scope) scopeSelect.value = scope;
+      render();
+      searchInput.focus();
+    }
+
+    // =========================
+    // Optional: display overview sections in grid
+    // (failsafe: alleen vullen als arrays bestaan)
+    // =========================
+    function safeArray(name){
+      return Array.isArray(window[name]) ? window[name] : null;
+    }
+
+    function displayAllData(){
+      // Zorgbundels (altijd)
+      const zorgbundelsDiv = document.getElementById("zorgbundelsDisplay");
       zorgbundelsDiv.innerHTML = zorgbundels.map(item => `
         <div class="data-item">
-                  <h3>${item.naam}</h3>
-                  <p><strong>Medisch lexicon:</strong> ${item.medischLexicon.join(', ')}</p>
-                  <p><strong>Patiëntenlexicon:</strong> ${item.patientLexicon.join(', ')}</p>
-                </div>
-      `).join('');
+          <h3>${esc(item.naam)}</h3>
+          <p><strong>Medisch:</strong> ${esc((item.medischLexicon||[]).slice(0,10).join(", "))}${(item.medischLexicon||[]).length>10 ? "…" : ""}</p>
+          <p><strong>Patiënt:</strong> ${esc((item.patientLexicon||[]).slice(0,6).join(", "))}${(item.patientLexicon||[]).length>6 ? "…" : ""}</p>
+        </div>
+      `).join("");
 
-      // Display Aandachtsgebieden
-      const aandachtsDiv = document.getElementById('aandachtsgebiedenDisplay');
-      aandachtsDiv.innerHTML = aandachtsgebieden.map(item => `
-        <div class="data-item">
-                  <h3>${item.naam}</h3>
-                  <p>${item.beschrijving}</p>
-                </div>
-      `).join('');
+      // Aandachtsgebieden (optioneel)
+      const aandachts = safeArray("aandachtsgebieden");
+      const aandachtsDiv = document.getElementById("aandachtsgebiedenDisplay");
+      aandachtsDiv.innerHTML = aandachts
+        ? aandachts.map(item => `
+            <div class="data-item">
+              <h3>${esc(item.naam || "")}</h3>
+              <p>${esc(item.beschrijving || "")}</p>
+            </div>
+          `).join("")
+        : `<div class="data-item"><h3>Geen data</h3><p>Definieer <code>aandachtsgebieden</code> om dit te vullen.</p></div>`;
 
-      // Display Medisch Lexicon
-      const lexiconDiv = document.getElementById('lexiconDisplay');
-      lexiconDiv.innerHTML = medischLexicon.map(item => `
-        <div class="data-item">
-                  <h3>${item.term}</h3>
-                  <p>${item.uitleg}</p>
-                </div>
-      `).join('');
+      // Medisch lexicon (optioneel)
+      const lexicon = safeArray("medischLexicon");
+      const lexiconDiv = document.getElementById("lexiconDisplay");
+      lexiconDiv.innerHTML = lexicon
+        ? lexicon.map(item => `
+            <div class="data-item">
+              <h3>${esc(item.term || "")}</h3>
+              <p>${esc(item.uitleg || "")}</p>
+            </div>
+          `).join("")
+        : `<div class="data-item"><h3>Geen data</h3><p>Definieer <code>medischLexicon</code> om dit te vullen.</p></div>`;
 
-      // Display Patiëntenlexicon
-      const patientLexDiv = document.getElementById('patientLexiconDisplay');
-      patientLexDiv.innerHTML = patientLexicon.map(item => `
-        <div class="data-item">
-                  <h3>${item.term}</h3>
-                  <p>${item.uitleg}</p>
-                </div>
-      `).join('');
+      // Patiëntenlexicon (optioneel)
+      const patientLex = safeArray("patientLexicon");
+      const patientLexDiv = document.getElementById("patientLexiconDisplay");
+      patientLexDiv.innerHTML = patientLex
+        ? patientLex.map(item => `
+            <div class="data-item">
+              <h3>${esc(item.term || "")}</h3>
+              <p>${esc(item.uitleg || "")}</p>
+            </div>
+          `).join("")
+        : `<div class="data-item"><h3>Geen data</h3><p>Definieer <code>patientLexicon</code> om dit te vullen.</p></div>`;
 
-      // Display Zorgverleners
-      const zorgverlenersDiv = document.getElementById('zorgverlenersDisplay');
-      zorgverlenersDiv.innerHTML = zorgverleners.map(item => `
-        <div class="data-item">
-                  <h3>${item.naam}</h3>
-                  <p><strong>Specialisatie:</strong> ${item.specialisatie}</p>
-                  <p><strong>Organisatie:</strong> ${item.organisatie}</p>
-                </div>
-      `).join('');
+      // Zorgverleners (optioneel)
+      const zorgverleners = safeArray("zorgverleners");
+      const zorgverlenersDiv = document.getElementById("zorgverlenersDisplay");
+      zorgverlenersDiv.innerHTML = zorgverleners
+        ? zorgverleners.map(item => `
+            <div class="data-item">
+              <h3>${esc(item.naam || "")}</h3>
+              <p><strong>Specialisatie:</strong> ${esc(item.specialisatie || "")}</p>
+              <p><strong>Organisatie:</strong> ${esc(item.organisatie || "")}</p>
+            </div>
+          `).join("")
+        : `<div class="data-item"><h3>Geen data</h3><p>Definieer <code>zorgverleners</code> om dit te vullen.</p></div>`;
 
-      // Display Wetenschappelijke Bronnen
-      const bronnenDiv = document.getElementById('bronnenDisplay');
-      bronnenDiv.innerHTML = bronnenLijst.map(item => `
-        <div class="data-item">
-                  <h3>${item.auteur}</h3>
-                  <p><strong>Titel:</strong> ${item.titel}</p>
-                  <p><strong>Publicatie:</strong> ${item.publicatie}, ${item.jaar}</p>
-                  <p><a href="${item.doi}" target="_blank">${item.doi}</a></p>
-                </div>
-      `).join('');
+      // Bronnen (optioneel: uit bundels of aparte lijst)
+      const bronnenLijst = safeArray("bronnenLijst");
+      const bronnenDiv = document.getElementById("bronnenDisplay");
+
+      if(bronnenLijst){
+        bronnenDiv.innerHTML = bronnenLijst.map(item => `
+          <div class="data-item">
+            <h3>${esc(item.titel || item.auteur || "Bron")}</h3>
+            <p><strong>Publicatie:</strong> ${esc(item.publicatie || "")} ${item.jaar ? `(${esc(item.jaar)})` : ""}</p>
+            ${item.doi ? `<p><a href="${esc(item.doi)}" target="_blank" rel="noopener">${esc(item.doi)}</a></p>` : ""}
+          </div>
+        `).join("");
+      } else {
+        // fallback: bronnen uit zorgbundels
+        const flat = [];
+        for(const zb of zorgbundels){
+          for(const b of (zb.bronnen || [])){
+            flat.push({ bundel: zb.naam, ...b });
+          }
+        }
+        bronnenDiv.innerHTML = flat.length
+          ? flat.map(b => `
+              <div class="data-item">
+                <h3>${esc(b.naam || "Bron")}</h3>
+                <p><strong>Type:</strong> ${esc(b.type || "")} • <strong>Jaar:</strong> ${esc(b.jaar || "")}</p>
+                <p><em>${esc(b.boodschap || "")}</em></p>
+                <p><strong>Bundel:</strong> ${esc(b.bundel || "")}</p>
+              </div>
+            `).join("")
+          : `<div class="data-item"><h3>Geen data</h3><p>Voeg <code>bronnen</code> toe per bundel of definieer <code>bronnenLijst</code>.</p></div>`;
+      }
     }
-  
+
+    // =========================
+    // Events
+    // =========================
+    searchInput.addEventListener("input", render);
+    scopeSelect.addEventListener("change", render);
+
+    clearBtn.addEventListener("click", () => setSearch("", "all"));
+    showAllBtn.addEventListener("click", () => { searchInput.value=""; render(); });
+
+    searchInput.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") render();
+      if(e.key === "Escape") setSearch("", "all");
+    });
+
+    // Badge click = direct zoeken binnen juiste scope
+    tbody.addEventListener("click", (e) => {
+      const btn = e.target.closest(".badge-btn");
+      if(!btn) return;
+      const term = btn.getAttribute("data-term") || "";
+      const type = btn.getAttribute("data-type") || "all";
+      setSearch(term, type === "medisch" ? "medisch" : "patient");
+    });
+
+    // Init
+    statBundels.textContent = String(zorgbundels.length);
+    render();
+    displayAllData();
+  </script>
 </body>
 </html>
+
