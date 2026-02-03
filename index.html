@@ -415,7 +415,36 @@
 </head>
 <body>
 
-<header>
+  /* Data Sections */
+    .data-section {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .data-section h2 {
+      margin-top: 0;
+      color: #2d3748;
+      border-bottom: 2px solid #e5eff8;
+      padding-bottom: 0.5rem;
+    }
+
+    .data-item {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: #f7fafc;
+      border-left: 4px solid #005b96;
+      border-radius: 4px;
+    }
+
+    .data-item h3 {
+      margin-top: 0;
+      color: #005b96;
+      font-size: 1.1rem;
+    }
+  <header>
   <h1>📋 Zorgbundels Zorgstart</h1>
   <p>Compleet overzicht van alle probleemgestuurde zorgbundels met medisch lexicon, patiënten-lexicon, interventies en wetenschappelijke bronnen.</p>
 </header>
@@ -630,10 +659,50 @@
         <!-- rows injected by JS -->
       </tbody>
     </table>
+
+        <!-- Data Overview Sections -->
+
+        <!-- Zorgbundels -->
+        <div class="data-section" id="zorgbundels-section">
+                <h2>📚 Zorgbundels</h2>
+                <div id="zorgbundelsDisplay"></div>
+              </div>
+
+        <!-- Aandachtsgebieden -->
+        <div class="data-section" id="aandachtsgebieden-section">
+                <h2>🎯 Aandachtsgebieden</h2>
+                <div id="aandachtsgebiedenDisplay"></div>
+              </div>
+
+        <!-- Medisch Lexicon -->
+        <div class="data-section" id="lexicon-section">
+                <h2>📖 Medisch Lexicon</h2>
+                <div id="lexiconDisplay"></div>
+              </div>
+
+        <!-- Patiënten-lexicon -->
+        <div class="data-section" id="patientlexicon-section">
+                <h2>👥 Patiënten-lexicon</h2>
+                <div id="patientLexiconDisplay"></div>
+              </div>
+
+        <!-- Zorg- en/of dienstverleners -->
+        <div class="data-section" id="zorgverleners-section">
+                <h2>🥼 Zorg- en/of dienstverleners</h2>
+                <div id="zorgverlenersDisplay"></div>
+              </div>
+
+        <!-- Wetenschappelijke bronnen -->
+        <div class="data-section" id="bronnen-section">
+                <h2>📊 Wetenschappelijke bronnen</h2>
+                <div id="bronnenDisplay"></div>
+              </div>
   </div>
 </main>
 
 <script>
+
+  
   // =========================
   // DATA
   // =========================
@@ -1219,6 +1288,72 @@
 
   // Initial render
   render();
+      displayAllData();
+
 </script>
+  // =========================
+    // Display Data Sections
+    // =========================
+
+    function displayAllData() {
+      // Display Zorgbundels
+      const zorgbundelsDiv = document.getElementById('zorgbundelsDisplay');
+      zorgbundelsDiv.innerHTML = zorgbundels.map(item => `
+        <div class="data-item">
+                  <h3>${item.naam}</h3>
+                  <p><strong>Medisch lexicon:</strong> ${item.medischLexicon.join(', ')}</p>
+                  <p><strong>Patiëntenlexicon:</strong> ${item.patientLexicon.join(', ')}</p>
+                </div>
+      `).join('');
+
+      // Display Aandachtsgebieden
+      const aandachtsDiv = document.getElementById('aandachtsgebiedenDisplay');
+      aandachtsDiv.innerHTML = aandachtsgebieden.map(item => `
+        <div class="data-item">
+                  <h3>${item.naam}</h3>
+                  <p>${item.beschrijving}</p>
+                </div>
+      `).join('');
+
+      // Display Medisch Lexicon
+      const lexiconDiv = document.getElementById('lexiconDisplay');
+      lexiconDiv.innerHTML = medischLexicon.map(item => `
+        <div class="data-item">
+                  <h3>${item.term}</h3>
+                  <p>${item.uitleg}</p>
+                </div>
+      `).join('');
+
+      // Display Patiëntenlexicon
+      const patientLexDiv = document.getElementById('patientLexiconDisplay');
+      patientLexDiv.innerHTML = patientLexicon.map(item => `
+        <div class="data-item">
+                  <h3>${item.term}</h3>
+                  <p>${item.uitleg}</p>
+                </div>
+      `).join('');
+
+      // Display Zorgverleners
+      const zorgverlenersDiv = document.getElementById('zorgverlenersDisplay');
+      zorgverlenersDiv.innerHTML = zorgverleners.map(item => `
+        <div class="data-item">
+                  <h3>${item.naam}</h3>
+                  <p><strong>Specialisatie:</strong> ${item.specialisatie}</p>
+                  <p><strong>Organisatie:</strong> ${item.organisatie}</p>
+                </div>
+      `).join('');
+
+      // Display Wetenschappelijke Bronnen
+      const bronnenDiv = document.getElementById('bronnenDisplay');
+      bronnenDiv.innerHTML = bronnenLijst.map(item => `
+        <div class="data-item">
+                  <h3>${item.auteur}</h3>
+                  <p><strong>Titel:</strong> ${item.titel}</p>
+                  <p><strong>Publicatie:</strong> ${item.publicatie}, ${item.jaar}</p>
+                  <p><a href="${item.doi}" target="_blank">${item.doi}</a></p>
+                </div>
+      `).join('');
+    }
+  
 </body>
 </html>
