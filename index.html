@@ -30,7 +30,6 @@
       padding: 1.25rem 1.5rem 2.5rem;
     }
 
-    /* Info banner */
     .info-banner{
       background: linear-gradient(135deg,#e8f4fd 0%,#f0f9ff 100%);
       border:1px solid #b8daff;
@@ -46,7 +45,6 @@
     }
     .info-banner .icon{ font-size:1.25rem; margin-top:.1rem; }
 
-    /* Stats */
     .stats-bar{
       display:flex;
       gap:.75rem;
@@ -66,7 +64,6 @@
     .stat-number{ font-size:1.5rem; font-weight:800; color:#005b96; line-height:1; }
     .stat-label{ font-size:.82rem; color:#64748b; }
 
-    /* Controls */
     .controls{
       display:grid;
       grid-template-columns: 1.6fr .6fr auto;
@@ -118,7 +115,6 @@
       margin-top:.25rem;
     }
 
-    /* Table */
     .table-wrap{
       background:#fff;
       border:1px solid #e2e8f0;
@@ -158,7 +154,6 @@
 
     .small{ font-size:.82rem; color:#475569; }
 
-    /* Badges */
     .badge-btn{
       display:inline-block;
       border:1px solid transparent;
@@ -181,7 +176,6 @@
       box-shadow:0 0 0 3px rgba(122,167,199,.25);
     }
 
-    /* Data sections grid */
     .sections{
       margin-top: 1.25rem;
       display:grid;
@@ -225,8 +219,14 @@
       font-size:.85rem;
       color:#475569;
     }
+    .data-item code{
+      background:#f1f5f9;
+      padding:.1rem .35rem;
+      border-radius:6px;
+      border:1px solid #e2e8f0;
+      font-size:.82em;
+    }
 
-    /* Responsive */
     @media (max-width: 1100px){
       .controls{ grid-template-columns: 1fr 1fr; }
       .controls-actions{ justify-content:flex-start; }
@@ -255,7 +255,6 @@
       </div>
     </div>
 
-    <!-- Stats -->
     <div class="stats-bar">
       <div class="stat-item">
         <div class="stat-number" id="statBundels">0</div>
@@ -267,7 +266,6 @@
       </div>
     </div>
 
-    <!-- Controls -->
     <section class="controls" aria-label="Zoeken en filteren">
       <div class="field">
         <label for="searchInput">Zoekterm(en)</label>
@@ -297,7 +295,6 @@
       <div class="hint">Tip: gebruik <strong>quotes</strong> voor woordgroepen. Enter = zoeken, Esc = wissen. Klik op een badge om binnen dat lexicon te filteren.</div>
     </section>
 
-    <!-- Table -->
     <div class="table-wrap" role="region" aria-label="Tabel zorgbundels" tabindex="0">
       <table id="zorgbundelsTable">
         <thead>
@@ -314,13 +311,10 @@
             <th class="small">Noodzakelijke zorgverleners</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- rows injected by JS -->
-        </tbody>
+        <tbody></tbody>
       </table>
     </div>
 
-    <!-- Data Overview Sections in a clear grid -->
     <section class="sections" aria-label="Data-overzicht">
       <div class="data-section" id="zorgbundels-section">
         <h2>📚 Zorgbundels</h2>
@@ -356,7 +350,7 @@
 
   <script>
     // =========================
-    // DATA (belangrijk: fix syntax: kommas + correcte velden)
+    // DATA (volledig + syntactisch correct)
     // =========================
     const zorgbundels = [
       {
@@ -382,23 +376,393 @@
         monitoring: "Herhaalde hypo’s, glycemie >20 mmol/L, koorts + hoge glycemie, voetulcus of infectie → huisarts/wachtdienst; levensbedreigend → 112.",
         zorgverleners: "Huisarts, POH/diabetesverpleegkundige, thuisverpleging, diëtist, podotherapeut/pedicure, apotheker.",
         bronnen: [
-          {naam:"NHG-Standaard Diabetes mellitus type 2", type:"richtlijn", jaar:2024, boodschap:"Gestructureerde controles met HbA1c-streefwaarde, preventie complicaties, zelfmanagement"}
+          {naam:"NHG-Standaard Diabetes mellitus type 2", type:"richtlijn", jaar:2024, boodschap:"Gestructureerde controles met HbA1c-streefwaarde, preventie complicaties, zelfmanagement"},
+          {naam:"IDF Diabetes Atlas 2023", type:"rapport", jaar:2023, boodschap:"Global prevalentie, sociaal-economische impact, preventiestrategieën"},
+          {naam:"Diabetesfederatie – Zelfzorg na ziekenhuisopname", type:"advies", jaar:2023, boodschap:"Zelfcontrole, educatie hypo/hyper, nazorgtraject met diabetesverpleegkundige"},
+          {naam:"ADA Standards of Medical Care in Diabetes", type:"richtlijn", jaar:2024, boodschap:"Evidence-based aanbevelingen voor diagnostiek, behandeling, monitoring"},
+          {naam:"NICE Diabetes guidelines (Type 1 & 2)", type:"richtlijn", jaar:2023, boodschap:"Bloedglucosecontrole, cardiovasculaire bescherming, voetenscreening"},
+          {naam:"Cochrane: Structured patient education for diabetes", type:"review", jaar:2022, boodschap:"Educatie verbetert glycemische controle en kwaliteit van leven"},
+          {naam:"Diabetes UK – Hypo awareness", type:"advies", jaar:2023, boodschap:"Herkenning en behandeling hypoglycemie, voorlichting patiënt en omgeving"}
         ]
       },
       {
         nr: 2,
         naam: "Polyfarmacie & medicatieveiligheid – Medicatieveiligheidsbundel",
-        medischLexicon: ["polyfarmacie","multimedicatie","≥5 medicaties","medicatielijst","STOPP/START","hoogrisico-medicatie"],
-        patientLexicon: ["Ik neem heel veel pillen","Ik weet niet meer waarvoor alles is","Mijn medicijnen zijn veranderd"],
-        klinisch: "Bijwerkingen, therapietrouw, aantal medicaties.",
-        educatie: "Uitleg nieuw schema, gevaar dubbelgebruik/zelf stoppen.",
-        functioneel: "Weekdoos, visueel schema, alarmen of medicatierol.",
-        coordinatie: "Medicatiereview huisarts–huisapotheker; afstemming voorschrijvers.",
-        monitoring: "Ernstige bijwerkingen → huisarts; acute intoxicatie → 112.",
-        zorgverleners: "Huisarts, huisapotheker, thuisverpleging.",
+        medischLexicon: [
+          "polyfarmacie","multimedicatie","≥5 medicaties","medicatielijst",
+          "therapiewijziging","wijziging medicatieschema","bijwerkingen",
+          "nevenwerkingen","medicatiefouten","verkeerd ingenomen",
+          "medicatie-ontrouw","non-compliance","interacties","STOPP/START",
+          "hoogrisico-medicatie"
+        ],
+        patientLexicon: [
+          "Ik neem heel veel pillen","Ik weet niet meer waarvoor alles is",
+          "Mijn medicijnen zijn veranderd","Ik neem soms iets verkeerd",
+          "Ik ben zo suf van mijn medicatie",
+          "Ik zie door de bomen het bos niet meer met al die pillen"
+        ],
+        klinisch: "Bijwerkingen (sufheid, verwardheid, vallen, hypotensie), therapietrouw, aantal medicaties.",
+        educatie: "Uitleg nieuw schema, gevaar dubbelgebruik/zelf stoppen, OTC/NSAID-risico, teach-back medicatie-inname.",
+        functioneel: "Weekdoos, visueel schema, alarmen of medicatierol, praktische hulp bij vullen.",
+        coordinatie: "Warme overdracht AMO; medicatiereview huisarts–huisapotheker; afstemming tussen voorschrijvers (STOPP/START).",
+        monitoring: "Geen AMO, dubbelgebruik, ernstige bijwerkingen, blijvend onbegrip → huisarts + huisapotheker; acute intoxicatie → 112.",
+        zorgverleners: "Huisarts, huisapotheker, thuisverpleging, POH/ouderen, eventueel geriater.",
+        bronnen: [
+          {naam:"KNMP Richtlijn Medicatiebeoordeling", type:"richtlijn", jaar:2023, boodschap:"Systematische review van polyfarmacie, STOPP/START-criteria"},
+          {naam:"NHG-Standaard Polyfarmacie bij ouderen", type:"richtlijn", jaar:2024, boodschap:"Deprescribing, medicatiereview, samen beslissen met patiënt"},
+          {naam:"HARM-wrestling taskforce – Preventie medicatiefouten", type:"advies", jaar:2022, boodschap:"High-risk medicatie, dubbelchecks, warme overdracht apotheek"},
+          {naam:"WHO Global Patient Safety Challenge – Medication Without Harm", type:"framework", jaar:2022, boodschap:"Internationale richtlijn voor medicatieveiligheid, transitions of care"},
+          {naam:"Cochrane: Interventions to improve medication adherence", type:"review", jaar:2023, boodschap:"Multi-component interventies met educatie en tools verhogen therapietrouw"},
+          {naam:"EMA Guidance on elderly and polypharmacy", type:"advies", jaar:2023, boodschap:"Extra aandacht nierenfunctie, interacties, kwetsbare ouderen"}
+        ]
+      },
+      {
+        nr: 3,
+        naam: "Onzichtbaar cardiovasculair hoog risico – Cardiovasculaire preventiebundel",
+        medischLexicon: [
+          "hypertensie","hoge bloeddruk","dyslipidemie","hypercholesterolemie",
+          "CVRM","coronair lijden","ischemische hartziekte",
+          "myocardinfarct in voorgeschiedenis","CVA","TIA",
+          "perifere vaatlijden","obesitas","BMI >30","roker",
+          "familiaire cardiovasculaire belasting"
+        ],
+        patientLexicon: [
+          "Mijn bloeddruk is vaak te hoog","Ik heb hoge cholesterol","Ik rook nog",
+          "Ik beweeg bijna niet","Ik heb al eens een TIA gehad",
+          "Hart- en vaatziekten zitten in de familie"
+        ],
+        klinisch: "Bloeddruk, lipiden, gewicht, rookstatus, SCORE2(-OP)/CVRM-profiel.",
+        educatie: "Uitleg persoonlijk risico en nut van leefstijl (voeding, beweging, rookstop) en medicatie.",
+        functioneel: "Toeleiding GLI/beweegprogramma, rookstop, gezonde voeding, medicatieschema.",
+        coordinatie: "CVRM-spreekuur (POH) met terugkoppeling huisarts; afstemming met diëtist en fysiotherapeut; integratie met diabetes/CNI-bundels.",
+        monitoring: "Onbehandelde zeer hoge bloeddruk, therapieresistentie, nieuwe angina/TIA → huisarts/cardioloog; acute pijn op de borst → 112.",
+        zorgverleners: "Huisarts, POH (CVRM), diëtist, fysiotherapeut, apotheker, psycholoog (stress).",
+        bronnen: [
+          {naam:"ESC Guidelines on Cardiovascular Disease Prevention", type:"richtlijn", jaar:2024, boodschap:"SCORE2 risicoschatting, leefstijl + medicamenteuze interventies"},
+          {naam:"NHG-Standaard Cardiovasculair risicomanagement", type:"richtlijn", jaar:2023, boodschap:"Geïntegreerde CVRM-aanpak in de eerste lijn met POH-ondersteuning"},
+          {naam:"WHO Global Hearts Initiative", type:"framework", jaar:2023, boodschap:"Wereldwijde strategie voor preventie hart- en vaatziekten via leefstijl en medicatie"},
+          {naam:"Hartstichting – CVRM-zorg na ontslag", type:"advies", jaar:2023, boodschap:"Nazorgtraject met leefstijlcoaching, monitoring risicofactoren"},
+          {naam:"Cochrane: Lifestyle interventions for CVD prevention", type:"review", jaar:2023, boodschap:"Dieet, beweging, rookstop verminderen cardiovasculaire events significant"},
+          {naam:"AHA/ACC Cholesterol guidelines", type:"richtlijn", jaar:2023, boodschap:"Statines, PCSK9-remmers, leefstijl voor LDL-reductie"}
+        ]
+      },
+      {
+        nr: 4,
+        naam: "Cardio-vasculaire instabiliteit / collapsrisico – Veiligheids- & monitoringbundel",
+        medischLexicon: [
+          "atriumfibrilleren","AF","hartritmestoornis","tachycardie",
+          "bradycardie","syncope","presyncope","collaps",
+          "onwel geworden","hypotensie","orthostatische hypotensie",
+          "ECG-afwijkingen","pacemaker","ICD","plotse bewustzijnsverlies"
+        ],
+        patientLexicon: [
+          "Ik word soms plots duizelig","Mijn hart slaat raar/overslagen",
+          "Ik ben al eens flauwgevallen","Ik voel me ineens helemaal slap",
+          "Ik durf niet goed alleen te zijn door mijn hart"
+        ],
+        klinisch: "Bloeddruk (ook orthostatisch), pols/ritme, syncope-episodes, valincidenten.",
+        educatie: "Herkenning pijn op de borst, ernstige dyspnoe, syncope; veilig opstaan en omgaan met medicatie.",
+        functioneel: "Mobiliteitshulpmiddelen, veilige trap/badkamer, verlichting, personenalarm.",
+        coordinatie: "Afstemming huisarts–cardioloog–thuisverpleging; rapporteren incidenten via nurseline.",
+        monitoring: "Syncope/collaps, ernstige hypotensie, ritmestoornis, val met letsel → huisarts/specialist; pijn op de borst of ernstige dyspnoe → 112.",
+        zorgverleners: "Huisarts, cardioloog, thuisverpleging, kinesitherapeut, ergotherapeut, alarmcentrale.",
+        bronnen: [
+          {naam:"ESC Guidelines on Atrial Fibrillation", type:"richtlijn", jaar:2024, boodschap:"Ritmebeheer, anticoagulatie, geïntegreerde zorg voor AF-patiënten"},
+          {naam:"NHG-Standaard Atriumfibrilleren", type:"richtlijn", jaar:2023, boodschap:"Detectie, risicostratificatie, DOAC-therapie in de eerste lijn"},
+          {naam:"ESC Guidelines on Syncope", type:"richtlijn", jaar:2022, boodschap:"Diagnostiek, risicostratificatie, preventie recidief syncope"},
+          {naam:"NICE Atrial fibrillation management", type:"richtlijn", jaar:2023, boodschap:"Stroke-preventie, rate/rhythm control, shared decision making"},
+          {naam:"Hartstichting – Leven met hartfalen en ritmestoornissen", type:"advies", jaar:2023, boodschap:"Zelfmonitoring, alarmtekenen, medicatietrouw, leefstijl"},
+          {naam:"Cochrane: Anticoagulation for AF", type:"review", jaar:2023, boodschap:"DOAC's reduceren stroke-risico bij AF met acceptabel bloedingsrisico"}
+        ]
+      },
+      {
+        nr: 5,
+        naam: "Chronische respiratoire kwetsbaarheid (COPD/astma) – Chronische respiratoire zorgbundel",
+        medischLexicon: [
+          "COPD","chronische bronchitis","emfyseem","GOLD",
+          "astma","exacerbaties","longaanval","dyspnoe",
+          "kortademigheid","inspanningsdyspnoe","luchtwegobstructie",
+          "inhalatietherapie","puffer","zuurstoftherapie","thuiszuurstof"
+        ],
+        patientLexicon: [
+          "Ik ben snel buiten adem","Ik durf me niet meer in te spannen",
+          "Ik krijg vaak een longontsteking","Mijn puffers helpen niet altijd",
+          "Ik ben bang om geen lucht meer te krijgen"
+        ],
+        klinisch: "Ademfrequentie, dyspnoe-score, saturatie, hoest/sputum, exacerbaties.",
+        educatie: "Persoonlijk astma/COPD-actieplan, vroege exacerbatiesignalen, rescue-medicatie, correcte inhalatietechniek, rookstop.",
+        functioneel: "Beweegprogramma, energiemanagement, hulpmiddelen (douchestoel, rollator), woonventilatie.",
+        coordinatie: "Afstemming huisarts–POH/longverpleegkundige–longarts; koppeling longrevalidatie; vaccinatieplanning.",
+        monitoring: "Ernstige dyspnoe, cyanose, verwardheid, RR >30, bloed ophoesten → 112; toenemende benauwdheid ondanks medicatie → huisarts.",
+        zorgverleners: "Huisarts, POH/longverpleegkundige, longarts, fysiotherapeut, diëtist, apotheker, rookstopcoach.",
+        bronnen: [
+          {naam:"GOLD Strategy COPD 2024", type:"richtlijn", jaar:2024, boodschap:"Classificatie, inhalatietechniek, exacerbatiemanagement, geïntegreerde zorg"},
+          {naam:"GINA Asthma guidelines", type:"richtlijn", jaar:2024, boodschap:"Controle-gebaseerde behandeling, stepwise approach, zelfmanagement"},
+          {naam:"NHG-Standaard COPD", type:"richtlijn", jaar:2023, boodschap:"Diagnostiek, behandeling en begeleiding COPD in de huisartsenpraktijk"},
+          {naam:"NHG-Standaard Astma", type:"richtlijn", jaar:2023, boodschap:"Evidence-based astmamanagement, longfunctiebeoordeling, inhalatie-instructie"},
+          {naam:"Longfonds – Leven met COPD/astma", type:"advies", jaar:2023, boodschap:"Patiënteneducatie, rookstop, pulmonale revalidatie, thuiszuurstof"},
+          {naam:"Cochrane: Pulmonary rehabilitation for COPD", type:"review", jaar:2022, boodschap:"Significant verbetert kwaliteit van leven, inspanningsvermogen, dyspnoe"}
+        ]
+      },
+      {
+        nr: 6,
+        naam: "Metabool-renale kwetsbaarheid (CNI, HF, multimorbiditeit) – Chronische zorgbundel",
+        medischLexicon: [
+          "chronische nierinsufficiëntie","CNI","eGFR verlaagd","nierfunctiestoornis",
+          "nierschade","diuretica","lisdiureticum","hartfalen",
+          "decompensatio cordis","vochtretentie","oedeem",
+          "elektrolytenstoornissen","hyperkaliëmie","hyponatriëmie","multimorbiditeit"
+        ],
+        patientLexicon: [
+          "Ik hou veel vocht vast","Mijn benen of enkels staan dik",
+          "Ik ben snel moe, weinig reserve","Mijn nieren werken niet goed, zeggen ze",
+          "Ik mag niet veel drinken van de dokter","Mijn medicijnen worden vaak aangepast"
+        ],
+        klinisch: "eGFR, albuminurie, elektrolyten, bloeddruk, gewicht (HF dagelijks), oedeem, dyspnoe.",
+        educatie: "Vocht- en zoutbeperking, tekenen decompensatie, nut nier- en hartbeschermende medicatie.",
+        functioneel: "Weegschaal, maatbeker, aangepast dieet (plantaardig, eiwit/fosfaatbeperking) met praktische ondersteuning.",
+        coordinatie: "Gezamenlijk plan huisarts–nefroloog–cardioloog–diëtist–nurseline; medicatiereview met apotheker.",
+        monitoring: "HF: +2 kg in 3 dagen, ernstige dyspnoe → huisarts/112; CNI: snelle eGFR-daling, ernstige elektrolytenstoornis → nefroloog.",
+        zorgverleners: "Huisarts, nefroloog, cardioloog, POH, diëtist (nier), apotheker, thuisverpleging.",
+        bronnen: [
+          {naam:"KDIGO Guidelines Chronic Kidney Disease", type:"richtlijn", jaar:2024, boodschap:"Evidence-based management CNI, eGFR-monitoring, cardiovasculaire bescherming"},
+          {naam:"ESC Heart Failure Guidelines", type:"richtlijn", jaar:2023, boodschap:"Diagnostiek, medicatie, zelfmanagement, multidisciplinaire aanpak HF"},
+          {naam:"NHG-Standaard Chronische nierschade", type:"richtlijn", jaar:2023, boodschap:"Vroegdetectie, behandeling, verwijscriteria CNI in de eerste lijn"},
+          {naam:"NHG-Standaard Hartfalen", type:"richtlijn", jaar:2024, boodschap:"Diagnostiek, behandeling en monitoring hartfalen in de huisartspraktijk"},
+          {naam:"Nierstichting – Leven met CNI", type:"advies", jaar:2023, boodschap:"Patiënteneducatie, dieet, zoutbeperking, nierbeschermende medicatie"},
+          {naam:"Hartstichting – Leven met hartfalen", type:"advies", jaar:2023, boodschap:"Zelfmanagement, dagelijks wegen, vochtbeperking, signaalherkenning"}
+        ]
+      },
+      {
+        nr: 7,
+        naam: "Functionele achteruitgang & valrisico – Functionele ondersteuningsbundel",
+        medischLexicon: [
+          "mobiliteitsbeperking","loopstoornis","gangstoornis","valincident",
+          "herhaald vallen","frailty","kwetsbare oudere","ADL-hulp nodig",
+          "hulpmiddelen bij mobiliteit","spierzwakte","sarcopenie",
+          "transferproblemen","instabiel stappen","recent functioneel verval","valneiging"
+        ],
+        patientLexicon: [
+          "Ik ben al een paar keer gevallen","Ik stap niet meer zeker",
+          "Opstaan gaat moeilijk","Ik durf niet meer naar buiten",
+          "Ik voel me zwakker dan vroeger","Ik heb schrik om te vallen"
+        ],
+        klinisch: "Mobiliteit (TUG), ADL/iADL, spierkracht, valincidenten, visus.",
+        educatie: "Valrisico, veilig bewegen, gebruik hulpmiddelen, omgaan met valangst.",
+        functioneel: "Kracht- en balansoefenprogramma, woningaanpassingen, hulpmiddelen (rollator, beugels, schoeisel, nachtlicht).",
+        coordinatie: "Multidisciplinair zorgplan (huisarts, kine, ergo, diëtist, thuiszorg); betrokkenheid mantelzorg.",
+        monitoring: "≥2 vallen/jaar, ernstige valangst, snel ADL-verlies → huisarts/kine/ergo; ernstige val met letsel → 112/SEH.",
+        zorgverleners: "Huisarts, kinesitherapeut, ergotherapeut, diëtist, thuisverpleging, maatschappelijk werker.",
+        bronnen: []
+      },
+      {
+        nr: 8,
+        naam: "Ondervoeding & verminderde voedselinname – Voeding & herstelbundel",
+        medischLexicon: [
+          "ondervoeding","risico op ondervoeding","malnutritie","gewichtsverlies",
+          "verminderde intake","slechte eetlust","anorexie","cachexie",
+          "laag BMI","sarcopenie","slikproblemen","dysfagie",
+          "voedingstekort","sondevoeding","dieet bij gewichtsverlies"
+        ],
+        patientLexicon: [
+          "Ik heb geen eetlust","Ik sla maaltijden over","Eten lukt niet goed meer",
+          "Ik ben veel vermagerd","Alleen eten vind ik lastig",
+          "Ik heb vaak geen zin om te koken"
+        ],
+        klinisch: "Gewicht, MUST/SNAQ65+, eetlust, intake, kauw-/slikproblemen.",
+        educatie: "Belang eiwit/energie, kleine frequente maaltijden, verrijking, herkennen ondervoeding.",
+        functioneel: "Maaltijdservice, hulp bij boodschappen/koken, drinkvoeding, aangepaste consistentie voeding.",
+        coordinatie: "Diëtist als spil, afstemming met huisarts/nurseline; koppeling met ouderen-/valbundel.",
+        monitoring: ">5 kg verlies in 3 maanden, <50% inname, slikproblemen → huisarts + diëtist/logopedist; ernstige dehydratie → 112/huisarts.",
+        zorgverleners: "Diëtist, huisarts, thuisverpleging, logopedist, maatschappelijk werker, maaltijdservice.",
+        bronnen: []
+      },
+      {
+        nr: 9,
+        naam: "Cognitieve kwetsbaarheid – Cognitieve ondersteuningsbundel",
+        medischLexicon: [
+          "dementieel beeld","dementie","ziekte van Alzheimer","cognitieve stoornissen",
+          "geheugenstoornissen","MCI","milde cognitieve stoornis","delirium",
+          "acute verwardheid","desoriëntatie","executieve functiestoornissen",
+          "MMSE verlaagd","kloktest afwijkend","cognitieve achteruitgang","vergeetachtigheid"
+        ],
+        patientLexicon: [
+          "Ik vergeet veel de laatste tijd","Alles wordt te ingewikkeld voor mij",
+          "Ik raak soms de kluts kwijt","Ik weet niet meer of ik mijn pillen genomen heb",
+          "Hij/zij is niet meer zoals vroeger in zijn/haar hoofd",
+          "Hij/zij raakt snel in de war"
+        ],
+        klinisch: "Oriëntatie, geheugen, uitvoerende functies, ADL-zelfstandigheid, medicatiebeheer.",
+        educatie: "Uitleg over geheugenproblemen, structuur/compensaties, veilig gedrag, medicatieondersteuning.",
+        functioneel: "Dag-/weekschema’s, herinneringshulpmiddelen, toezicht bij medicatie en ADL, extra aanwezigheid bij alleenwonenden.",
+        coordinatie: "Huisarts + evt. geriater/psycholoog; casemanagement via nurseline/thuiszorg; afstemming met mantelzorg.",
+        monitoring: "Acuut delier, wegloopgedrag, ernstige verwaarlozing of onveiligheid → huisarts/spoed; progressieve achteruitgang → huisarts/geriater.",
+        zorgverleners: "Huisarts, geriater, thuisverpleging, casemanager/dementiecoach, ergotherapeut, maatschappelijk werker.",
+        bronnen: []
+      },
+      {
+        nr: 10,
+        naam: "Psychosociaal lijden & eenzaamheid – Mentaal-welzijnsbundel",
+        medischLexicon: [
+          "depressieve klachten","depressie","somberheid","angst",
+          "angststoornis","rouw","psychosociale problematiek",
+          "aanpassingsstoornis","suïcidale gedachten","burn-out",
+          "stressklachten","slaapproblemen","insomnia","eenzaamheid",
+          "sociaal isolement"
+        ],
+        patientLexicon: [
+          "Ik voel me alleen","Het is me allemaal te veel","Ik slaap slecht",
+          "Ik heb nergens zin in","Ik zie het niet meer zitten",
+          "Ik heb niemand om mee te praten"
+        ],
+        klinisch: "Depressie-/angstscreening, suïcidaliteit, slaap, sociaal functioneren.",
+        educatie: "Psycho-educatie over depressie/angst, coping, normaliseren, info over eerstelijnspsychologie/zelfhulp.",
+        functioneel: "Toeleiding naar sociale activiteiten, lotgenotengroepen, vrijwilligersbezoek; drempels verlagen (vervoer, kosten).",
+        coordinatie: "Afstemming huisarts–POH-GGZ–eerstelijnspsycholoog–maatschappelijk werker; koppeling met mantelzorg-/ouderenbundel.",
+        monitoring: "Suïcidegedachten, ernstige depressie/angst, verwaarlozing → huisarts/GGZ-crisis; acuut gevaar → 112.",
+        zorgverleners: "Huisarts, POH-GGZ, eerstelijnspsycholoog, maatschappelijk werker, welzijnsorganisaties, crisisteam.",
+        bronnen: []
+      },
+      {
+        nr: 11,
+        naam: "Mantelzorger-overbelasting – Mantelzorg-ondersteuningsbundel",
+        medischLexicon: [
+          "mantelzorger overbelast","mantelzorgbelasting","caregiver burden",
+          "beperkte sociale ondersteuning","intensieve mantelzorg",
+          "complexe zorgsituatie","nachtelijke zorg thuis",
+          "alleenstaande mantelzorger","overbelasting gezin",
+          "vraag naar opname","nood aan respijtzorg","uitputting mantelzorger"
+        ],
+        patientLexicon: [
+          "Ik kan dit niet meer alleen","Het wordt mij te zwaar",
+          "Ik ben altijd moe van de zorg","Ik weet niet hoe lang ik dit nog volhoud",
+          "Er is niemand anders die kan helpen","Ik kom niet meer aan mezelf toe"
+        ],
+        klinisch: "Belasting, draagkracht, eigen gezondheid mantelzorger, uren zorg per week.",
+        educatie: "Voorlichting over risico’s van overbelasting, grenzen stellen, beschikbare ondersteuning en respijtzorg.",
+        functioneel: "Respijtzorg (dag-/nachtopvang, logeerzorg), extra thuiszorg, hulpmiddelen om fysieke last te verminderen, praktische hulp.",
+        coordinatie: "Huisarts, thuiszorg en mantelzorgsteunpunt stemmen zorg af; mantelzorger expliciet in zorgplan.",
+        monitoring: "Ernstige uitputting, agressie, verwaarlozing/mishandeling → huisarts/maatschappelijk werker; acuut gevaar → 112/politie.",
+        zorgverleners: "Huisarts, thuisverpleging, mantelzorgsteunpunt, maatschappelijk werker, psycholoog.",
+        bronnen: []
+      },
+      {
+        nr: 12,
+        naam: "Veiligheid & angst om alleen te zijn – Veiligheids- & alarmbundel",
+        medischLexicon: [
+          "valrisico","verhoogd valrisico","valangst","alleenwonend",
+          "woont alleen","onveiligheidsgevoel","angst om alleen te zijn",
+          "nachtelijke onrust","cognitieve kwetsbaarheid","val in voorgeschiedenis",
+          "valincident","angststoornis","personenalarm","valdetectie",
+          "hulpverlening 's nachts"
+        ],
+        patientLexicon: [
+          "Ik ben bang dat ik val","Wat als er iets gebeurt en ik alleen ben?",
+          "Ik durf niet meer alleen te zijn","’s Nachts voel ik me onveilig",
+          "Ik geraak niet op tijd aan de telefoon of bel"
+        ],
+        klinisch: "Valrisico, nachtelijke onrust, feitelijk gebruik alarm/telefoon, angstniveau.",
+        educatie: "Uitleg werking alarm, noodnummers, stappenplan bij incident; psycho-educatie rond angst.",
+        functioneel: "Personenalarm/valdetectie, verbeterde verlichting, verwijderen valrisico’s, evt. nachtzorg/burencirkel.",
+        coordinatie: "Afstemming huisarts–alarmcentrale–thuiszorg–mantelzorg; koppeling met val- en cognitieve bundel.",
+        monitoring: "Herhaalde vallen, paniekaanvallen, niet bellen bij incidenten → huisarts/ergotherapeut/GGZ; ernstig letsel → 112.",
+        zorgverleners: "Thuisverpleging, ergotherapeut, huisarts, alarmcentrale, maatschappelijk werker, GGZ.",
+        bronnen: []
+      },
+      {
+        nr: 13,
+        naam: "Palliatieve zorgnoden – Palliatieve thuiszorgbundel",
+        medischLexicon: [
+          "palliatief","palliatieve fase","levenseinde","terminaal",
+          "comfortzorg","symptoomcontrole","refractaire symptomen",
+          "advance care planning","wilsverklaring","DNR",
+          "niet-reanimeren","geen curatieve opties meer",
+          "beperkte levensverwachting","palliatieve thuiszorg","herhaalde opnames"
+        ],
+        patientLexicon: [
+          "Ik wil vooral comfort nu","Ik wil niet meer naar het ziekenhuis",
+          "De pijn is moeilijk te dragen","Ik ben moe van alles",
+          "Wat als het slechter gaat, wat dan?",
+          "Ik wil mijn laatste tijd thuis doorbrengen"
+        ],
+        klinisch: "Symptomen (pijn, dyspnoe, misselijkheid, angst, delier), functionele status, comfort.",
+        educatie: "Ziekteverloop, symptoomcontrole, basis + rescue-medicatie, wat te doen bij verslechtering, informatie over terminale fase.",
+        functioneel: "Zorgbed, ADL-hulp, hulpmiddelen (rolstoel, tillift), nacht-/vrijwilligerszorg, ondersteuning huishouden.",
+        coordinatie: "Advance care planning; nauwe samenwerking huisarts–palliatief team–thuisverpleging–apotheker; gedeeld zorgplan.",
+        monitoring: "Onvoldoende symptoomcontrole, refractaire onrust, acute respiratoire nood → huisarts/palliatief team; acute levensbedreiging → 112 volgens beleid.",
+        zorgverleners: "Huisarts, palliatief team, thuisverpleging, apotheker, diëtist, psycholoog, geestelijk verzorger, maatschappelijk werker.",
+        bronnen: []
+      },
+      {
+        nr: 14,
+        naam: "Incontinentie & delirium-risico – Incontinentie- & helderheidsbundel",
+        medischLexicon: [
+          "urine-incontinentie","fecale incontinentie","mictieproblemen",
+          "urgency","nycturie","nachtelijk urineverlies","delirium",
+          "acute cognitieve verandering","CAM-positief","nachtelijke onrust",
+          "verhoogd valrisico","continentiezorg","katheter","urineretentie"
+        ],
+        patientLexicon: [
+          "Ik geraak niet op tijd op het toilet","Ik heb soms ongelukjes",
+          "’s Nachts is het lastig met naar het toilet gaan",
+          "Hij is ’s avonds plots zo verward","Ze is ’s nachts helemaal zichzelf niet"
+        ],
+        klinisch: "Mictiepatroon, nachtelijke toiletgang, episodes delier/nachtelijke onrust, valincidenten.",
+        educatie: "Gebruik incontinentiemateriaal, toiletgedrag, drinken, vroege deliersignalen voor mantelzorgers.",
+        functioneel: "Passend incontinentiemateriaal, toiletverhogers, beugels, nachtverlichting, korte looplijnen.",
+        coordinatie: "Afstemming huisarts–continentieverpleegkundige–thuisverpleging–kinesitherapeut; integratie met valpreventie.",
+        monitoring: "Acute verwardheid, urineretentie, UWI met delier, val door nachtelijke toiletgang → huisarts/spoed; ernstig delier + gevaar → 112.",
+        zorgverleners: "Huisarts, thuisverpleging, continentieverpleegkundige, kinesitherapeut, ergotherapeut.",
+        bronnen: []
+      },
+      {
+        nr: 15,
+        naam: "Ernstige zintuiglijke beperkingen (zien/horen) – Communicatie- & veiligheidsbundel",
+        medischLexicon: [
+          "visusstoornis","slechtziend","blind","maculadegeneratie",
+          "glaucoom","cataract","gehoorverlies","slechthorend",
+          "doof","hoortoestel","communicatieproblemen",
+          "begrijpt uitleg moeilijk","zintuiglijke beperking",
+          "auditieve beperking","visuele beperking"
+        ],
+        patientLexicon: [
+          "Ik hoor niet goed meer","Ik zie dat niet goed/meer",
+          "Ik versta de dokter vaak niet",
+          "Ik heb moeite om de brieven of etiketten te lezen",
+          "Ik begrijp de uitleg niet goed"
+        ],
+        klinisch: "Functioneren met bril/hoortoestel, impact op ADL/veiligheid, miscommunicatie-incidenten.",
+        educatie: "Belang hulpmiddelen, onderhoud, aangepaste communicatie (tempo, volume, grote letters).",
+        functioneel: "(Her)aanpassing bril/hoortoestel, grootlettermateriaal, aangepaste telefoon, betere verlichting/contrasten.",
+        coordinatie: "Afstemming huisarts–oogarts–audioloog–thuiszorg; zintuiglijke beperking meenemen in andere bundels.",
+        monitoring: "Plots visus-/gehoorverlies, onveilige situaties door gemiste info → oogarts/audioloog/huisarts; acuut gevaar (bijv. verkeer) → 112.",
+        zorgverleners: "Huisarts, oogarts, audioloog, thuisverpleging, ergotherapeut, maatschappelijk werker.",
+        bronnen: []
+      },
+      {
+        nr: 16,
+        naam: "Verslaving / psychosociaal ontwrichtend gedrag – Verslavings- & veiligheidsbundel",
+        medischLexicon: [
+          "alcoholmisbruik","alcoholafhankelijkheid","middelengebruik",
+          "druggebruik","intoxicatie","verslavingsproblematiek",
+          "therapie-ontrouw","non-compliance","agressief gedrag",
+          "agitatie","huiselijk geweld","conflictueuze thuissituatie",
+          "psychiatrische voorgeschiedenis","dubbeldiagnose","onveilige thuissituatie"
+        ],
+        patientLexicon: [
+          "Hij drinkt te veel","Hij/zij is vaak zat of onder invloed",
+          "Het escaleert hier soms thuis",
+          "We durven hem/haar niet alleen laten",
+          "Er is vaak ruzie om het drinken of de drugs"
+        ],
+        klinisch: "Gebruikspatroon, intoxicaties, onthouding, psychiatrische symptomen, veiligheid gezin.",
+        educatie: "Motiverende gespreksvoering, risico’s gebruik, behandelopties, grenzen/veiligheid voor mantelzorg.",
+        functioneel: "Steun bij dagstructuur, financiën, huisvesting; praktische steun voor gezin/kinderen.",
+        coordinatie: "Strakke zorgcoördinatie huisarts–CGG/verslavingszorg–maatschappelijk werk–eventueel politie/justitie; duidelijke crisisroutes.",
+        monitoring: "Agressie, suïcidaliteit, ernstige intoxicatie, huiselijk geweld → spoed/politie/psychiatrische crisisdienst; toenemend gebruik/ontregeling → huisarts/CGG.",
+        zorgverleners: "Huisarts, CGG/verslavingszorg, maatschappelijk werker, thuisverpleging, politie/justitie, GGZ-crisisdienst.",
         bronnen: []
       }
-      // ... plak hier je overige bundels (zelfde structuur) ...
     ];
 
     // =========================
@@ -430,7 +794,6 @@
         .replace(/[\u0300-\u036f]/g,"");
     }
 
-    // Tokens met quotes
     function tokenize(query){
       const q = query.trim();
       if(!q) return [];
@@ -522,7 +885,6 @@
 
     // =========================
     // Optional: display overview sections in grid
-    // (failsafe: alleen vullen als arrays bestaan)
     // =========================
     function safeArray(name){
       return Array.isArray(window[name]) ? window[name] : null;
@@ -576,10 +938,10 @@
         : `<div class="data-item"><h3>Geen data</h3><p>Definieer <code>patientLexicon</code> om dit te vullen.</p></div>`;
 
       // Zorgverleners (optioneel)
-      const zorgverleners = safeArray("zorgverleners");
+      const zv = safeArray("zorgverleners");
       const zorgverlenersDiv = document.getElementById("zorgverlenersDisplay");
-      zorgverlenersDiv.innerHTML = zorgverleners
-        ? zorgverleners.map(item => `
+      zorgverlenersDiv.innerHTML = zv
+        ? zv.map(item => `
             <div class="data-item">
               <h3>${esc(item.naam || "")}</h3>
               <p><strong>Specialisatie:</strong> ${esc(item.specialisatie || "")}</p>
@@ -588,7 +950,7 @@
           `).join("")
         : `<div class="data-item"><h3>Geen data</h3><p>Definieer <code>zorgverleners</code> om dit te vullen.</p></div>`;
 
-      // Bronnen (optioneel: uit bundels of aparte lijst)
+      // Bronnen: voorkeur aparte bronnenLijst, anders bundel-bronnen flattenen
       const bronnenLijst = safeArray("bronnenLijst");
       const bronnenDiv = document.getElementById("bronnenDisplay");
 
@@ -601,7 +963,6 @@
           </div>
         `).join("");
       } else {
-        // fallback: bronnen uit zorgbundels
         const flat = [];
         for(const zb of zorgbundels){
           for(const b of (zb.bronnen || [])){
@@ -635,7 +996,6 @@
       if(e.key === "Escape") setSearch("", "all");
     });
 
-    // Badge click = direct zoeken binnen juiste scope
     tbody.addEventListener("click", (e) => {
       const btn = e.target.closest(".badge-btn");
       if(!btn) return;
